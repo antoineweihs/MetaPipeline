@@ -12,7 +12,8 @@ run_meta(phenotype, gender, num_cores = 1, model = "FE",
   pre_meta_step = FALSE, pre_meta_path, post_meta_step = FALSE,
   post_meta_path, run_post_process = FALSE, run_posterior_Check = TRUE,
   post_sigLevel = 0.05, post_cutoff = 0.95, post_replicates = 1000,
-  plot_forest = FALSE, final_step = FALSE, final_path,
+  plot_forest = FALSE, annotate_result = FALSE,
+  annotation_filepath = NULL, final_step = FALSE, final_path,
   print_log = TRUE, save_RData = FALSE, save_csvData = FALSE,
   output_path = "./", verbose = TRUE)
 }
@@ -84,6 +85,11 @@ NOTE: Significant runtime increase if applied using the BAYES model and \code{ru
 posterior probability check (n >> 100 recommended)}
 
 \item{plot_forest}{(bool) POSTPROCESS: TRUE: will create forest plot saved to output_path if run_post_process is TRUE FALSE: won't}
+
+\item{annotate_result}{(bool) POSTPROCESS: TRUE: will merge output file with annoation file FALSE: won't}
+
+\item{annotation_filepath}{(string) POSTPROCESS: file path to annotation file (annotation file has to contain a 'Markername' column, has to be a tab separated file,
+comments have to be preceded by '#')}
 
 \item{final_step}{(bool) TRUE: runs script located at \code{final_path} FALSE: won't}
 

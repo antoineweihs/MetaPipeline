@@ -49,111 +49,112 @@ bayes_post_process <- function(result, combined_data, run_posterior_Check = TRUE
     text = "No significant site. Returning original data set"
     if(verbose) {writeLines(text)}
     if(print_log) {cat(text, file=log_path, append=TRUE, sep="\n")}
-    return(result)
   }
-
-  #terminal and log file output
-  text = paste0("Found ", length(significant_hits), " sites with a probability above ", cutoff)
-  if(verbose) {writeLines(text)}
-  if(print_log) {cat(text, file=log_path, append=TRUE, sep="\n")}
-
-  #if posterior check is run add relevant columns to output
-  if(run_posterior_Check)
-  {
-    result$pp.applied = FALSE
-    result$pp.pValue = NA
-    result$pp.replicates = NA
-    result$pp.computation_time = NA
-  }
-
-  #go through sites abov cut-off
-  for(i in 1:length(significant_hits))
+  else
   {
     #terminal and log file output
-    text = paste0("Analysing site: ", result$Markername[significant_hits[i]])
+    text = paste0("Found ", length(significant_hits), " sites with a probability above ", cutoff)
     if(verbose) {writeLines(text)}
     if(print_log) {cat(text, file=log_path, append=TRUE, sep="\n")}
 
-    #extract the relevant data from the cohort data set and rerun the meta-analysis
-    data = combined_data[combined_data$probeID == result$Markername[significant_hits[i]],]
-    current_result = try(bayesmeta::bayesmeta(y=data$BETA, sigma = data$SE, labels=data$Cohort, tau.prior= function(t){bayesmeta::dhalfcauchy(t, scale=1)},
-                                              mu.prior = c("mean"=0, "sd"=1)), silent=TRUE) #half Cauchy prior recommended by Roever
-
-    # check if the meta-analysis encountered problems if yes, skip to next site
-    if(inherits(current_result, "try-error"))
+    #if posterior check is run add relevant columns to output
+    if(run_posterior_Check)
     {
-      text = paste0("Bayesmeta encountered an error at site ", result$Markername[significant_hits[i]], ". Error message: ", current_result)
+      result$pp.applied = FALSE
+      result$pp.pValue = NA
+      result$pp.replicates = NA
+      result$pp.computation_time = NA
+    }
+
+    #go through sites abov cut-off
+    for(i in 1:length(significant_hits))
+    {
+      #terminal and log file output
+      text = paste0("Analysing site: ", result$Markername[significant_hits[i]])
       if(verbose) {writeLines(text)}
       if(print_log) {cat(text, file=log_path, append=TRUE, sep="\n")}
-    }
-    else
-    {
-      # if forest plot is wanted, creates a forest plot from the bayesmeta output
-      if(plot_forest)
-      {
-        output_string = paste0(output_path, phenotype, "_", gender, "_", result$Markername[significant_hits[i]], "_forestplot.png")
 
-        #terminal and log file output
-        text = paste0("creating forest plot and saving it as: ", output_string)
+      #extract the relevant data from the cohort data set and rerun the meta-analysis
+      data = combined_data[combined_data$probeID == result$Markername[significant_hits[i]],]
+      current_result = try(bayesmeta::bayesmeta(y=data$BETA, sigma = data$SE, labels=data$Cohort, tau.prior= function(t){bayesmeta::dhalfcauchy(t, scale=1)},
+                                                mu.prior = c("mean"=0, "sd"=1)), silent=TRUE) #half Cauchy prior recommended by Roever
+
+      # check if the meta-analysis encountered problems if yes, skip to next site
+      if(inherits(current_result, "try-error"))
+      {
+        text = paste0("Bayesmeta encountered an error at site ", result$Markername[significant_hits[i]], ". Error message: ", current_result)
         if(verbose) {writeLines(text)}
         if(print_log) {cat(text, file=log_path, append=TRUE, sep="\n")}
-
-        #save output to file
-        grDevices::png(output_string)
-        bayesmeta::forestplot.bayesmeta(current_result, digits=8)
-        grDevices::dev.off()
       }
-
-      # if posterior predictive check is wanted, runs a one-sided check (significant run time increase)
-      if(run_posterior_Check)
+      else
       {
-        #checks which side the alternative hypothesis lies on
-        myalternative = "greater"
-        if(sign(as.numeric(as.character(result$MAP_effect[significant_hits[i]]))) == -1) {myalternative = "less"}
-
-        #defines number of cores if undefined
-        if(!is.null(num_cores)){num_cores=1}
-
-        #runs posterior predictive check
-        ppc_result = try(bayesmeta::pppvalue(current_result, parameter="mu", value=0, alternative=myalternative, statistic="cdf", n=replicates,
-                                             parallel=num_cores, quietly=!verbose), silent=TRUE)
-
-        #checks if error occured (sometimes due to the model running incorrectly), if yes tries to run the check again
-        if(inherits(ppc_result, "try-error"))
+        # if forest plot is wanted, creates a forest plot from the bayesmeta output
+        if(plot_forest)
         {
+          output_string = paste0(output_path, phenotype, "_", gender, "_", result$Markername[significant_hits[i]], "_forestplot.png")
+
           #terminal and log file output
-          text = paste0("Site ", result$Markername[significant_hits[i]], " encountered an error during the posterior predictive check. Trying again. Error message: ",
-                        ppc_result)
+          text = paste0("creating forest plot and saving it as: ", output_string)
           if(verbose) {writeLines(text)}
           if(print_log) {cat(text, file=log_path, append=TRUE, sep="\n")}
 
-          #runs posterior predictive check again
+          #save output to file
+          grDevices::png(output_string)
+          bayesmeta::forestplot.bayesmeta(current_result, digits=8)
+          grDevices::dev.off()
+        }
+
+        # if posterior predictive check is wanted, runs a one-sided check (significant run time increase)
+        if(run_posterior_Check)
+        {
+          #checks which side the alternative hypothesis lies on
+          myalternative = "greater"
+          if(sign(as.numeric(as.character(result$MAP_effect[significant_hits[i]]))) == -1) {myalternative = "less"}
+
+          #defines number of cores if undefined
+          if(!is.null(num_cores)){num_cores=1}
+
+          #runs posterior predictive check
           ppc_result = try(bayesmeta::pppvalue(current_result, parameter="mu", value=0, alternative=myalternative, statistic="cdf", n=replicates,
-                                               if(!is.null(num_cores)){parallel=num_cores}, quietly=!verbose), silent=TRUE)
-        }
+                                               parallel=num_cores, quietly=!verbose), silent=TRUE)
 
-        #checks if the check ran into problems again
-        if(inherits(ppc_result, "try-error"))
-        {
-          #terminal and log file output
-          text = paste0("Site ", result$Markername[significant_hits[i]], " again encountered an error during the posterior predictive check. Returning NA.
-                        Error message: ", ppc_result)
-          if(verbose) {writeLines(text)}
-          if(print_log) {cat(text, file=log_path, append=TRUE, sep="\n")}
+          #checks if error occured (sometimes due to the model running incorrectly), if yes tries to run the check again
+          if(inherits(ppc_result, "try-error"))
+          {
+            #terminal and log file output
+            text = paste0("Site ", result$Markername[significant_hits[i]], " encountered an error during the posterior predictive check. Trying again. Error message: ",
+                          ppc_result)
+            if(verbose) {writeLines(text)}
+            if(print_log) {cat(text, file=log_path, append=TRUE, sep="\n")}
 
-          # creates relevant output
-          result$pp.applied[significant_hits[i]] = TRUE
-          result$pp.pValue[significant_hits[i]] = NA
-          result$pp.replicates[significant_hits[i]] = NA
-          result$pp.computation_time[significant_hits[i]] = NA
-        }
-        #if no problems are present, saves the results to the output
-        else
-        {
-          result$pp.applied[significant_hits[i]] = TRUE
-          result$pp.pValue[significant_hits[i]] = ppc_result$p.value
-          result$pp.replicates[significant_hits[i]] = as.numeric(ppc_result$parameter)
-          result$pp.computation_time[significant_hits[i]] = ppc_result$computation.time
+            #runs posterior predictive check again
+            ppc_result = try(bayesmeta::pppvalue(current_result, parameter="mu", value=0, alternative=myalternative, statistic="cdf", n=replicates,
+                                                 if(!is.null(num_cores)){parallel=num_cores}, quietly=!verbose), silent=TRUE)
+          }
+
+          #checks if the check ran into problems again
+          if(inherits(ppc_result, "try-error"))
+          {
+            #terminal and log file output
+            text = paste0("Site ", result$Markername[significant_hits[i]], " again encountered an error during the posterior predictive check. Returning NA.
+                          Error message: ", ppc_result)
+            if(verbose) {writeLines(text)}
+            if(print_log) {cat(text, file=log_path, append=TRUE, sep="\n")}
+
+            # creates relevant output
+            result$pp.applied[significant_hits[i]] = TRUE
+            result$pp.pValue[significant_hits[i]] = NA
+            result$pp.replicates[significant_hits[i]] = NA
+            result$pp.computation_time[significant_hits[i]] = NA
+          }
+          #if no problems are present, saves the results to the output
+          else
+          {
+            result$pp.applied[significant_hits[i]] = TRUE
+            result$pp.pValue[significant_hits[i]] = ppc_result$p.value
+            result$pp.replicates[significant_hits[i]] = as.numeric(ppc_result$parameter)
+            result$pp.computation_time[significant_hits[i]] = ppc_result$computation.time
+          }
         }
       }
     }
@@ -176,7 +177,7 @@ bayes_post_process <- function(result, combined_data, run_posterior_Check = TRUE
       text = "Annotating result file"
       if(verbose) {writeLines(text)}
       if(print_log) {cat(text, file=log_path, append=TRUE, sep="\n")}
-      annotation_file <- readr::read_delim(annotation_filepath, "\t", escape_double = FALSE, comment = "#", trim_ws = TRUE)
+      annotation_file <- readr::read_delim(annotation_filepath, "\t", escape_double = FALSE, comment = "#", trim_ws = TRUE, col_types = readr::cols(), progress = FALSE)
       result = merge(result, annotation_file, by="Markername")
     }
   }

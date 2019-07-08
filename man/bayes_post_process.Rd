@@ -6,7 +6,8 @@
 \usage{
 bayes_post_process(result, combined_data, run_posterior_Check = TRUE,
   cutoff = 0.95, replicates = 1000, plot_forest = TRUE,
-  output_path = "./", phenotype = NULL, gender = NULL,
+  output_path = "./", annotate_result = TRUE,
+  annotation_filepath = NULL, phenotype = NULL, gender = NULL,
   print_log = FALSE, log_path = "./", verbose = TRUE,
   num_cores = NULL)
 }
@@ -24,6 +25,11 @@ bayes_post_process(result, combined_data, run_posterior_Check = TRUE,
 \item{plot_forest}{(bool) TRUE: Draws a forest plot of the top hits FALSE: won't}
 
 \item{output_path}{(string) output path for the forest plot}
+
+\item{annotate_result}{(bool) TRUE: will merge output file with annoation file FALSE: won't}
+
+\item{annotation_filepath}{(string) file path to annotation file (annotation file has to contain a 'Markername' column, has to be a tab separated file,
+comments have to be preceded by '#')}
 
 \item{phenotype}{(string) phenotype used in the analysis}
 

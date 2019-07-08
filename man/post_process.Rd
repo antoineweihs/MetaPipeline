@@ -5,9 +5,9 @@
 \title{post process for FE or REML Random Effect meta analysis}
 \usage{
 post_process(result, combined_data, model, significance_level = 0.05,
-  plot_forest = TRUE, output_path = "./", phenotype = NULL,
-  gender = NULL, print_log = FALSE, log_path = "./",
-  verbose = TRUE)
+  plot_forest = TRUE, output_path = "./", annotate_result = TRUE,
+  annotation_filepath = NULL, phenotype = NULL, gender = NULL,
+  print_log = FALSE, log_path = "./", verbose = TRUE)
 }
 \arguments{
 \item{result}{(data.frame) result from \code{\link{meta}} using FE and including FDR}
@@ -22,6 +22,11 @@ post_process(result, combined_data, model, significance_level = 0.05,
 
 \item{output_path}{(string) output path for the forest plot}
 
+\item{annotate_result}{(bool) TRUE: will merge output file with annoation file FALSE: won't}
+
+\item{annotation_filepath}{(string) file path to annotation file (annotation file has to contain a 'Markername' column, has to be a tab separated file,
+comments have to be preceded by '#')}
+
 \item{phenotype}{(string) phenotype currently examined (for the forest plot name and label)}
 
 \item{gender}{(string) gender currently examined (for the forest plot and label)}
@@ -31,6 +36,10 @@ post_process(result, combined_data, model, significance_level = 0.05,
 \item{log_path}{(string) path to log file}
 
 \item{verbose}{(bool) TRUE: Prints output to terminal FALSE: won't}
+}
+\value{
+data.frame containing the original \code{result} data set if \code{annotate_result} = FALSE or the \code{result} data.frame merged with the annotation data.frame if
+        \code{annotate_result} = TRUE.
 }
 \description{
 post processing function for \code{FE} and \code{REML} model which draws a forest plot for all site whose FDR adjusted p-value is above \code{significance_level}
