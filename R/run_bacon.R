@@ -29,29 +29,47 @@ run_bacon <- function(data_set, run=TRUE, print_log=FALSE, log_path="log.txt", v
       temp_data = temp_data[!is.na(temp_data$BETA),]
       temp_data = temp_data[!is.na(temp_data$SE),]
 
-      #run bacon function
-      bc = bacon::bacon(NULL, temp_data$BETA, temp_data$SE)
-
-      #check if inflation is above 1
-      if(bacon::inflation(bc) > 1)
+      if(length(temp_data$BETA) == 0)
       {
-        ##terminal and log file output
-        text = paste0("    ",cohorts[i], "-> inflation: ", bacon::inflation(bc), ", bias: ", bacon::bias(bc)," (modified)")
+        text = paste0("    ",cohorts[i], " skiped, no sites present")
         if(verbose) {writeLines(text)}
         if(print_log) {cat(text, file=log_path, append=TRUE, sep="\n")}
-
-        #modify effects and standard errors in the combined data file
-        temp_data$BETA = as.vector(bacon::es(bc))
-        temp_data$SE = as.vector(bacon::se(bc))
-        data_set = data_set[data_set$Cohort != cohorts[i],]
-        data_set = rbind(data_set, temp_data)
       }
       else
       {
-        #terminal and log file output
-        text = paste0("    ",cohorts[i], "-> inflation: ", bacon::inflation(bc), ", bias: ", bacon::bias(bc))
-        if(verbose) {writeLines(text)}
-        if(print_log) {cat(text, file=log_path, append=TRUE, sep="\n")}
+        #run bacon function
+        bc = bacon::bacon(NULL, temp_data$BETA, temp_data$SE)
+
+        #check if inflation is above 1
+        if(bacon::inflation(bc) == "NaN")
+        {
+          text = paste0("    ",cohorts[i], " skiped, bacon output is NaN")
+          if(verbose) {writeLines(text)}
+          if(print_log) {cat(text, file=log_path, append=TRUE, sep="\n")}
+        }
+        else
+        {
+          if(bacon::inflation(bc) > 1)
+          {
+            ##terminal and log file output
+            text = paste0("    ",cohorts[i], "-> inflation: ", bacon::inflation(bc), ", bias: ", bacon::bias(bc)," (modified)")
+            if(verbose) {writeLines(text)}
+            if(print_log) {cat(text, file=log_path, append=TRUE, sep="\n")}
+
+            #modify effects and standard errors in the combined data file
+            temp_data$BETA = as.vector(bacon::es(bc))
+            temp_data$SE = as.vector(bacon::se(bc))
+            data_set = data_set[data_set$Cohort != cohorts[i],]
+            data_set = rbind(data_set, temp_data)
+          }
+          else
+          {
+            #terminal and log file output
+            text = paste0("    ",cohorts[i], "-> inflation: ", bacon::inflation(bc), ", bias: ", bacon::bias(bc))
+            if(verbose) {writeLines(text)}
+            if(print_log) {cat(text, file=log_path, append=TRUE, sep="\n")}
+          }
+        }
       }
     }
 

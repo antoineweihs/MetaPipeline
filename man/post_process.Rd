@@ -4,10 +4,11 @@
 \alias{post_process}
 \title{post process for FE or REML Random Effect meta analysis}
 \usage{
-post_process(result, combined_data, model, significance_level = 0.05,
-  plot_forest = TRUE, output_path = "./", annotate_result = TRUE,
-  annotation_filepath = NULL, phenotype = NULL, gender = NULL,
-  print_log = FALSE, log_path = "./", verbose = TRUE)
+post_process(result, combined_data, model, FDR,
+  significance_level = 0.05, plot_forest = TRUE, output_path = "./",
+  annotate_result = TRUE, annotation_filepath = NULL,
+  phenotype = NULL, gender = NULL, print_log = FALSE,
+  log_path = "./", verbose = TRUE)
 }
 \arguments{
 \item{result}{(data.frame) result from \code{\link{meta}} using FE and including FDR}
@@ -15,6 +16,8 @@ post_process(result, combined_data, model, significance_level = 0.05,
 \item{combined_data}{(data.frame) data used to create the above result from \code{\link{load_files}}}
 
 \item{model}{(string) name of the model (can be either FE or REML)}
+
+\item{FDR}{(bool) TURE: FDR values are used instead of p-values (input needs to contain an FDR column) FALSE: p-values are used}
 
 \item{significance_level}{(double) FDR significance level for cut off}
 

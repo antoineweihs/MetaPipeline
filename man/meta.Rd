@@ -5,9 +5,10 @@
 \title{Meta-analysis function}
 \usage{
 meta(input_data, test_run = FALSE, test_run_length = 1000,
-  num_cores = 1, model = "FE", cpg_filter = NULL, FDR = TRUE,
-  print_log = FALSE, log_path = "log.txt", save_result = FALSE,
-  save_dest = "./", save_name = NULL, verbose = TRUE)
+  num_cores = 1, model = "FE", cohort = NULL, cpg_filter = NULL,
+  FDR = TRUE, print_log = FALSE, log_path = "log.txt",
+  save_result = FALSE, save_dest = "./", save_name = NULL,
+  verbose = TRUE)
 }
 \arguments{
 \item{input_data}{(data.frame) data set created by \code{\link{load_files}}}
@@ -20,6 +21,8 @@ meta(input_data, test_run = FALSE, test_run_length = 1000,
 
 \item{model}{(string) Estimator model for tau. Standard \code{FE}. Otherwise \code{BAYES} for a Bayesian approach, \code{REML} for a
 restricted maximum likelihood approach (not recommended for small number of cohorts)}
+
+\item{cohort}{(vector string) order in which the cohorts should appear in the output. If null random order is used.}
 
 \item{cpg_filter}{(vector string) a vector containing the CpG sites that should be analysed}
 
@@ -50,6 +53,7 @@ data.frame containing the results of the meta-analysis. If the model is FE or RE
         \item{\code{I2}}{: I squared parameter. Describes the percentage of variation across studies that is due to heterogeneity rather than by chance}
         \item{\code{number_of_cohorts}}{: number of cohorts available for the site}
         \item{\code{Cohort Names}}{: Multiple columns (one for each cohort) with + if the cohort effect is positive, - if it is negative, 0 if the effect is zero and ? if the no effect is present}
+        \item{\code{sample_size}}{: total number of samples included in this site}
         \item{\code{analysis_error}}{: TRUE if a problem occurred, FALSE if none occurred}
         \item{\code{error_message}}{: contains error message if analysis_error is TRUE}
         \item{\code{FDR}}{: exists if FDR is TRUE and contains the FDR adjusted p-values}
@@ -70,6 +74,7 @@ data.frame containing the results of the meta-analysis. If the model is FE or RE
         \item{\code{post_probability_effect_bigger_than_zero}}{: posterior probability of the effect being bigger than zero}
         \item{\code{time_taken}}{: analysis time take for this site in seconds}
         \item{\code{number_of_cohorts}}{: number of cohorts available for the site}
+        \item{\code{sample_size}}{: total number of samples included in this site}
         \item{\code{Cohort Names}}{: Multiple columns (one for each cohort) with + if the cohort effect is positive, - if it is negative, 0 if the effect is zero and ? if the no effect is present}
         \item{\code{analysis_error}}{: TRUE if a problem occurred, FALSE if none occurred}
         \item{\code{error_message}}{: contains error message if analysis_error is TRUE}

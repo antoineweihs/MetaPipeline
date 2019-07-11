@@ -99,7 +99,8 @@ run_meta <- function(	phenotype,
            paste0("   filter: ", filter), paste0("   FDR: ", FDR), paste0("   pre_meta_step: ", pre_meta_step),
            if(pre_meta_step) {paste0("   pre_meta_path: ", pre_meta_path)}, paste0("   post_meta_step: ", post_meta_step),
            if(post_meta_step) {paste0("   post_meta_path: ", post_meta_path)}, paste0("   run_post_process: ", run_post_process),
-           if(run_post_process) {paste0("   plot_forest: ", plot_forest)}, if(run_post_process) {paste0("   run_posterior_Check: ", run_posterior_Check)},
+           if(run_post_process) {paste0("   plot_forest: ", plot_forest)}, if(run_post_process) {paste0("   annotate_result: ", annotate_result)},
+           if(run_post_process) {paste0("   annotation_filepath: ", annotation_filepath)}, if(run_post_process) {paste0("   run_posterior_Check: ", run_posterior_Check)},
            if(run_post_process) {paste0("   post_sigLevel: ", post_sigLevel)}, if(run_post_process) {paste0("   post_cutoff: ", post_cutoff)},
            if(run_post_process) {paste0("   post_replicates: ", post_replicates)}, paste0("   final_step: ", final_step),
            if(final_step) {paste0("   final_path: ", final_path)}, paste0("   print_log: ", print_log), paste0("   save_RData: ", save_RData),
@@ -164,7 +165,7 @@ run_meta <- function(	phenotype,
     }
   }
   # run meta-analysis
-  meta_result = meta(input_data=combined_data, num_cores=num_cores, model=model, cpg_filter=cpg_filter, FDR=(run_post_process | FDR),
+  meta_result = meta(input_data=combined_data, num_cores=num_cores, model=model, cohort = cohort, cpg_filter=cpg_filter, FDR=FDR,
                      print_log=print_log, log_path=log_path, verbose=verbose)
 
   # post meta-analysis entry point
@@ -188,7 +189,7 @@ run_meta <- function(	phenotype,
     if(verbose) {writeLines(text)}
     if(print_log) {cat(text, file=log_path, append=TRUE, sep="\n")}
 
-    meta_result = post_process(result=meta_result, combined_data=combined_data, model=model, significance_level=post_sigLevel, plot_forest=plot_forest, annotate_result=annotate_result,
+    meta_result = post_process(result=meta_result, combined_data=combined_data, model=model, FDR=FDR, significance_level=post_sigLevel, plot_forest=plot_forest, annotate_result=annotate_result,
                   annotation_filepath=annotation_filepath, output_path=output_path, phenotype=phenotype, gender=gender, print_log=print_log,  log_path=log_path, verbose=verbose)
 
     ## terminal and log file output

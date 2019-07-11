@@ -7,6 +7,7 @@
 #' @param num_cores (int) number of cores that should be used (only works in Linux systems)
 #' @param model (string) Estimator model for tau. Standard \code{FE}. Otherwise \code{BAYES} for a Bayesian approach, \code{REML} for a
 #'              restricted maximum likelihood approach (not recommended for small number of cohorts)
+#' @param cohort (vector string) order in which the cohorts should appear in the output. If null random order is used.
 #' @param cpg_filter (vector string) a vector containing the CpG sites that should be analysed
 #' @param FDR (bool) TRUE: p values will be corrected false discovery rate, FALSE: won't WARNING: If TRUE, only sites no errors will be returned
 #' @param print_log (bool) TRUE: prints logs to log_path FALSE: won't
@@ -28,6 +29,7 @@
 #'         \item{\code{I2}}{: I squared parameter. Describes the percentage of variation across studies that is due to heterogeneity rather than by chance}
 #'         \item{\code{number_of_cohorts}}{: number of cohorts available for the site}
 #'         \item{\code{Cohort Names}}{: Multiple columns (one for each cohort) with + if the cohort effect is positive, - if it is negative, 0 if the effect is zero and ? if the no effect is present}
+#'         \item{\code{sample_size}}{: total number of samples included in this site}
 #'         \item{\code{analysis_error}}{: TRUE if a problem occurred, FALSE if none occurred}
 #'         \item{\code{error_message}}{: contains error message if analysis_error is TRUE}
 #'         \item{\code{FDR}}{: exists if FDR is TRUE and contains the FDR adjusted p-values}
@@ -48,6 +50,7 @@
 #'         \item{\code{post_probability_effect_bigger_than_zero}}{: posterior probability of the effect being bigger than zero}
 #'         \item{\code{time_taken}}{: analysis time take for this site in seconds}
 #'         \item{\code{number_of_cohorts}}{: number of cohorts available for the site}
+#'         \item{\code{sample_size}}{: total number of samples included in this site}
 #'         \item{\code{Cohort Names}}{: Multiple columns (one for each cohort) with + if the cohort effect is positive, - if it is negative, 0 if the effect is zero and ? if the no effect is present}
 #'         \item{\code{analysis_error}}{: TRUE if a problem occurred, FALSE if none occurred}
 #'         \item{\code{error_message}}{: contains error message if analysis_error is TRUE}
@@ -67,6 +70,7 @@ meta <- function(	input_data,
                   test_run_length=1000,
                   num_cores=1,
                   model="FE",
+                  cohort = NULL,
                   cpg_filter=NULL,
                   FDR=TRUE,
                   print_log=FALSE,
@@ -107,7 +111,21 @@ meta <- function(	input_data,
   data_sd = stats::sd(input_data$BETA)
 
   ## get list of cohort names
-  cohort_list = as.character(unlist(dplyr::distinct(input_data,Cohort), use.names=FALSE))	#list of cohort names in the study
+  if(!is.null(cohort))
+  {
+    check = TRUE
+    cohort_list = unique(input_data$Cohort)
+    if (length(cohort_list) != length(cohort)) {check = FALSE}
+    for (i in 1:length(cohort)) {if(cohort[i] %nin% cohort_list) {check=FALSE}}
+    if(check==FALSE)
+    {
+      text = "Meta error: given cohort list does not match the cohorts found in the data. Using random cohort list."
+      if(verbose) {writeLines(text)}
+      if(print_log) {cat(text, file=log_path, append=TRUE, sep="\n")}
+    }
+    else {cohort_list=cohort}
+  }
+  if(is.null(cohort)) {cohort_list = unique(input_data$Cohort)}
 
   ## only considers sites in cpg_filter if given
   if(!is.null(cpg_filter)) {input_data = dplyr::filter(input_data, probeID %in% cpg_filter)}
@@ -141,6 +159,7 @@ meta <- function(	input_data,
   doOneMETAFOR <- function(i)
   {
     data = dplyr::slice(input_data, start[i]:end[i]) #extract required data from the combined data set
+    sample_size = sum(data$Size)
 
     #if the CpG site only appears in 1 cohort, Na is returned for that site
     if(length(data$probeID) == 1)
@@ -151,7 +170,7 @@ meta <- function(	input_data,
       else if (data$BETA[1] < 0 && !is.na(data$BETA[1])) {included_cohorts[which(cohort_list == data$Cohort[1])] = "-"}
       else if (data$BETA[1] == 0 && !is.na(data$BETA[1])) {included_cohorts[which(cohort_list == data$Cohort[1])] = "0"}
       #create output vector
-      output = c(data$probeID[1], model, NA, NA, NA, NA, NA, NA, 1, included_cohorts, TRUE, "Only one cohort")
+      output = c(data$probeID[1], model, data$BETA[1], data$SE[1], data$P_VAL[1], NA, NA, NA, 1, included_cohorts, sample_size, TRUE, "Only one cohort")
     }
 
     #if the CpG site appears in more then 1 cohort an meta analysis is done on that site
@@ -170,8 +189,8 @@ meta <- function(	input_data,
       current_result = try(metafor::rma(yi=data$BETA, sei=data$SE, method=model), silent=TRUE)
 
       # check if error occured, if yes, return Na line with error code to output, if no return results
-      if(inherits(current_result, "try-error")) {output = c(data$probeID[1], model, NA, NA, NA, NA, NA, NA, length(data$probeID), included_cohorts, TRUE, current_result[1])}
-      else {output = c(data$probeID[1], model, current_result$b, current_result$se, current_result$pval, current_result$zval, current_result$tau2, current_result$I2, length(data$probeID), included_cohorts, FALSE, NA)}
+      if(inherits(current_result, "try-error")) {output = c(data$probeID[1], model, NA, NA, NA, NA, NA, NA, length(data$probeID), included_cohorts, sample_size, TRUE, current_result[1])}
+      else {output = c(data$probeID[1], model, current_result$b, current_result$se, current_result$pval, current_result$zval, current_result$tau2, current_result$I2, length(data$probeID), included_cohorts, sample_size, FALSE, NA)}
     }
     return(output)
   }
@@ -181,6 +200,7 @@ meta <- function(	input_data,
   {
     #extract relevant data from combined data set
     data = dplyr::slice(input_data, start[i]:end[i])
+    sample_size = sum(data$size)
 
     #create cohort columns (shows beta direction of each cohort) + if the efect is positive, - if the effect is negative, 0 if the effect is zero and ? if the effect is missing
     included_cohorts = rep("?", length(cohort_list))
@@ -194,7 +214,7 @@ meta <- function(	input_data,
     #if the CpG site only appears in 1 cohort, Na is returned for that site
     if(length(data$probeID) == 1)
     {
-      output = c(data$probeID[1], model, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 1, included_cohorts, TRUE, "only one CpG site present")
+      output = c(data$probeID[1], model, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 1, included_cohorts, sample_size, TRUE, "only one CpG site present")
     }
 
     #if the CpG site appears in more then 1 cohort an meta analysis is done on that site
@@ -206,13 +226,13 @@ meta <- function(	input_data,
 
       # check if error occured, if yes, return Na line with error code to output, if no return results
       if(inherits(current_result, "try-error")) {output = c(data$probeID[1], model, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,
-                                                            included_cohorts, TRUE, current_result)}
+                                                            included_cohorts, sample_size, TRUE, current_result)}
       else
       {
         output = c(data$probeID[1], model, current_result$MAP[2,2], current_result$MAP[2,1],  current_result$bayesfactor[1,"tau=0"], current_result$bayesfactor[1,"mu=0"],
                    current_result$bayesfactor[2,"tau=0"], current_result$bayesfactor[2,"mu=0"],current_result$pposterior(tau=1),
                    1-current_result$pposterior(tau=1), current_result$pposterior(mu=0), 1 - current_result$pposterior(mu=0), current_result$init.time,
-                   length(data$probeID), included_cohorts, FALSE, NA)
+                   length(data$probeID), included_cohorts, sample_size, FALSE, NA)
       }
     }
     return(output)
@@ -245,11 +265,11 @@ meta <- function(	input_data,
 
     #define column names of the output and reconfigure the output data.frame
     colnames(meta_result) = c("Markername", "Model", "Estimate_phenotype", "SE_phenotype", "Pval_phenotype", "Zval_phenotype", "Heterogeneity", "I2",
-                              "number_of_cohorts", cohort_list, "analysis_error", "error_message")
+                              "number_of_cohorts", cohort_list, "sample_size", "analysis_error", "error_message")
     meta_result = data.frame(meta_result, stringsAsFactors = FALSE)
 
     # set heterogenity at NA if it FE model is used (as it is not considered by this model)
-    if(model == "FE") {meta_result$Heterogenity = NA}
+    if(model == "FE") {meta_result$Heterogeneity = NA}
 
     # calculated FDR adjusted p-values of the meta-analysis outcome (will remove any site where an error occured)
     if(FDR)
@@ -273,7 +293,7 @@ meta <- function(	input_data,
     colnames(meta_result) = c("Markername", "Model" , "MAP_effect", "MAP_tau", "bayes_factor_tau_eq_0", "bayes_factor_effect_eq_0",  "minimum_bayes_factor_tau_eq_0",
                               "minimum_bayes_factor_effect_eq_0", "post_probability_tau_smaler_than_one", "post_probability_tau_bigger_than_one",
                               "post_probability_effect_smaler_than_zero", "post_probability_effect_bigger_than_zero", "time_taken", "number_of_cohorts",
-                              cohort_list, "analysis_error", "error_message")
+                              cohort_list, "sample_size", "analysis_error", "error_message")
     meta_result = data.frame(meta_result, stringsAsFactors = FALSE)
   }
 
