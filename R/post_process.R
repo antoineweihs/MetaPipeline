@@ -78,7 +78,7 @@ post_process <- function(result, combined_data, model, FDR, significance_level=0
 
   if(annotate_result)
   {
-    text = "Annotating output file"
+    text = "Annotating results"
     if(verbose) {writeLines(text)}
     if(print_log) {cat(text, file=log_path, append=TRUE, sep="\n")}
 
@@ -90,11 +90,8 @@ post_process <- function(result, combined_data, model, FDR, significance_level=0
     }
     else
     {
-      text = "Annotating result file"
-      if(verbose) {writeLines(text)}
-      if(print_log) {cat(text, file=log_path, append=TRUE, sep="\n")}
       annotation_file <- readr::read_delim(annotation_filepath, "\t", escape_double = FALSE, comment = "#", trim_ws = TRUE, col_types = readr::cols(), progress = FALSE)
-      result = merge(result, annotation_file, by="Markername")
+      result = merge(result, annotation_file, by="Markername", all.x=TRUE, all.y=FALSE)
     }
   }
 
