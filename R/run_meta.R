@@ -6,7 +6,7 @@
 #'              -> final entry point -> save results
 #' @author Antoine Weihs <uni.antoine.weihs@@gmail.com>
 #' @param phenotype (string) phenotype that should be analysed (has to appear in the summary$Phenotype column)
-#' @param gender (string) gender that should be analysed (has to appear in the summary$Gender column)
+#' @param stratum (string) stratum that should be analysed (has to appear in the summary$stratum column)
 #' @param num_cores (int) number of cores that should be used for the meta analysis (only works on Linux)
 #' @param model (string) Estimator model for tau. Standard \code{FE}. Otherwise \code{BAYES} for a Bayesian approach,
 #'          		\code{REML} for a restricted maximum likelihood approach (not recommended for small number of cohorts (<10))
@@ -14,7 +14,7 @@
 #'                          columns: \itemize{
 #'                          \item{\code{cohort}}{: Name of the cohort}
 #'                          \item{\code{phenotype}}{: Name of the observed phenotype used in the file}
-#'                          \item{\code{gender}}{: Name of the gender used in the file}
+#'                          \item{\code{stratum}}{: Name of the stratum used in the file}
 #'                          \item{\code{array_type}}{: type of array used by the cohort. Can be 450 or EPIC}
 #'                          \item{\code{probeID}}{: Name of the column containing the probeIDs}
 #'                          \item{\code{beta}}{: Name of the column containing the effect sizes}
@@ -62,7 +62,7 @@
 #' @return data.frame containing the results of the pipeline (see \code{\link{meta}} and \code{\link{bayes_post_process}}
 #' @export
 run_meta <- function(	phenotype,
-                      gender,
+                      stratum,
                       num_cores=1,
                       model="FE",
                       data_summary_path="/home/weihsa/data/Thyroid_Cohorts/Cohort_Summary/summary.txt",
@@ -91,7 +91,7 @@ run_meta <- function(	phenotype,
 
   ## create path variable for log file and write intro
   text = c("","######## Welcome to run_meta ########", "", paste0("Start Time: ", Sys.time()), "Global input variables: ", paste0("   Phenotype: ", phenotype),
-           paste0("   gender: ", gender), paste0("   num_cores: ", num_cores), paste0("   model: ", model),
+           paste0("   stratum: ", stratum), paste0("   num_cores: ", num_cores), paste0("   model: ", model),
            paste0("   data_summary_path: ", data_summary_path), paste0("   cohort: ", paste(cohort, collapse=", ")),
            paste0("   cpg_filter: ", paste(cpg_filter, collapse=", ")), paste0("   pre_bacon_step: ", pre_bacon_step),
            if(pre_bacon_step) {paste0("   pre_bacon_path: ", pre_bacon_path)}, paste0("   apply_bacon: ", apply_bacon),
@@ -112,14 +112,14 @@ run_meta <- function(	phenotype,
   # if log output is wanted, prints log to terminal
   if(print_log)
   {
-    log_path = paste0(output_path, model, "_", phenotype,"_",gender,"_",format(Sys.Date(), "%d_%m_%Y"),"_log.txt")
+    log_path = paste0(output_path, model, "_", phenotype,"_",stratum,"_",format(Sys.Date(), "%d_%m_%Y"),"_log.txt")
     cat(text, file=log_path, append=TRUE, sep="\n")
   }
   else {log_path=NULL}
 
   ## Meta-analysis pipeline:
   ## load files
-  combined_data = load_files(data_summary_path=data_summary_path, phenotype=phenotype, gender=gender, cohort=cohort, FDR=FALSE, annotation=FALSE,
+  combined_data = load_files(data_summary_path=data_summary_path, phenotype=phenotype, stratum=stratum, cohort=cohort, FDR=FALSE, annotation=FALSE,
                              anno_file_path=NULL, verbose=verbose, print_log=print_log, log_path=log_path)
 
   ## pre process
@@ -190,7 +190,7 @@ run_meta <- function(	phenotype,
     if(print_log) {cat(text, file=log_path, append=TRUE, sep="\n")}
 
     meta_result = post_process(result=meta_result, combined_data=combined_data, model=model, FDR=FDR, significance_level=post_sigLevel, plot_forest=plot_forest, annotate_result=annotate_result,
-                  annotation_filepath=annotation_filepath, output_path=output_path, phenotype=phenotype, gender=gender, print_log=print_log,  log_path=log_path, verbose=verbose)
+                  annotation_filepath=annotation_filepath, output_path=output_path, phenotype=phenotype, stratum=stratum, print_log=print_log,  log_path=log_path, verbose=verbose)
 
     ## terminal and log file output
     text = c(" ")
@@ -203,7 +203,7 @@ run_meta <- function(	phenotype,
   {
     meta_result = bayes_post_process(result=meta_result, combined_data=combined_data, run_posterior_Check=run_posterior_Check,
                                      cutoff=post_cutoff, replicates=post_replicates, plot_forest=plot_forest, output_path=output_path,
-                                     phenotype=phenotype, gender=gender, print_log=print_log, log_path=log_path, verbose=verbose,
+                                     phenotype=phenotype, stratum=stratum, print_log=print_log, log_path=log_path, verbose=verbose,
                                      num_cores=num_cores)
 
     ## terminal and log file output
@@ -228,15 +228,15 @@ run_meta <- function(	phenotype,
   #save meta-analysis output as RData (if save_RData = TRUE)
   if(save_RData)
   {
-    path=paste0(output_path, model, "_", phenotype,"_",gender,"_",format(Sys.Date(), "%d_%m_%Y"),".RData")
-    save_files(meta_result, "rdata", path, phenotype, gender, print_log, log_path, verbose)
+    path=paste0(output_path, model, "_", phenotype,"_",stratum,"_",format(Sys.Date(), "%d_%m_%Y"),".RData")
+    save_files(meta_result, "rdata", path, phenotype, stratum, print_log, log_path, verbose)
   }
 
   #save meta-analysis output as csv (if save_csvData = TRUE)
   if(save_csvData)
   {
-    path=paste0(output_path, model, "_", phenotype,"_",gender,"_",format(Sys.Date(), "%d_%m_%Y"),".csv")
-    save_files(meta_result, "csv", path, phenotype, gender, print_log, log_path, verbose)
+    path=paste0(output_path, model, "_", phenotype,"_",stratum,"_",format(Sys.Date(), "%d_%m_%Y"),".csv")
+    save_files(meta_result, "csv", path, phenotype, stratum, print_log, log_path, verbose)
   }
 
   return(meta_result)

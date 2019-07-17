@@ -5,7 +5,7 @@
 #' @param type (string) either \code{csv} or \code{rdata}. File type \code{data} should be saved as
 #' @param save_path (sting) full path to which the output should be saved to (including filename)
 #' @param phenotype (string) phenotype used in the analysis
-#' @param gender (string) gender used in the analysis
+#' @param stratum (string) stratum used in the analysis
 #' @param print_log (bool) TRUE: print to log file FALSE: won't
 #' @param log_path (string) path to log file
 #' @param verbose (bool) TRUE: Prints output to terminal FALSE: won't
@@ -13,7 +13,7 @@
 #' @importFrom utils write.csv
 #'
 #' @export
-save_files <- function(data, type, save_path, phenotype, gender, print_log, log_path, verbose)
+save_files <- function(data, type, save_path, phenotype, stratum, print_log, log_path, verbose)
 {
   if(type == "csv")
   {

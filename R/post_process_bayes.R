@@ -13,7 +13,7 @@
 #' @param annotation_filepath (string) file path to annotation file (annotation file has to contain a 'Markername' column, has to be a tab separated file,
 #'                            comments have to be preceded by '#')
 #' @param phenotype (string) phenotype used in the analysis
-#' @param gender (string) gender used in the analysis
+#' @param stratum (string) stratum used in the analysis
 #' @param print_log (bool) TRUE: print to log file FALSE: won't
 #' @param log_path (string) path to log file
 #' @param verbose (bool) TRUE: Prints output to terminal FALSE: won't
@@ -33,7 +33,7 @@
 #' @export
 bayes_post_process <- function(result, combined_data, run_posterior_Check = TRUE, cutoff=0.95, replicates=1000, plot_forest=TRUE, output_path="./",
                                annotate_result=TRUE, annotation_filepath=NULL,
-                               phenotype=NULL, gender=NULL, print_log=FALSE, log_path="./", verbose=TRUE, num_cores=NULL)
+                               phenotype=NULL, stratum=NULL, print_log=FALSE, log_path="./", verbose=TRUE, num_cores=NULL)
 {
   #terminal and log file output
   text = "Running Bayes post process"
@@ -91,7 +91,7 @@ bayes_post_process <- function(result, combined_data, run_posterior_Check = TRUE
         # if forest plot is wanted, creates a forest plot from the bayesmeta output
         if(plot_forest)
         {
-          output_string = paste0(output_path, phenotype, "_", gender, "_", result$Markername[significant_hits[i]], "_forestplot.png")
+          output_string = paste0(output_path, phenotype, "_", stratum, "_", result$Markername[significant_hits[i]], "_forestplot.png")
 
           #terminal and log file output
           text = paste0("creating forest plot and saving it as: ", output_string)

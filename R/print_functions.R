@@ -3,20 +3,20 @@
 #' @author Antoine Weihs <uni.antoine.weihs@@gmail.com>
 #' @param data_set (data.frame) data set created by \code{\link{load_files}}
 #' @param save_path (string) place where the outputs are saved
-#' @param gender (string) gender currently analysed
+#' @param stratum (string) stratum currently analysed
 #' @param phenotype (string) phenotype currently analysed
 #' @param verbose (bool) TRUE: will print output to terminal FALSE: won't
 #' @param print_log (bool) TRUE: prints logs to log_path FALSE: won't
 #' @param log_path (string) full path + file name of log
 #'
 #' @export
-print_summaries <- function(data_set,save_path, gender, phenotype, verbose=TRUE, print_log=FALSE, log_path="./log.txt")
+print_summaries <- function(data_set,save_path, stratum, phenotype, verbose=TRUE, print_log=FALSE, log_path="./log.txt")
 {
   #sets number of decimal places to 12 digits
   options(digits=12)
 
   #define save path
-  full_path = paste0(save_path,phenotype,"_",gender,"_cohort_stats.txt")
+  full_path = paste0(save_path,phenotype,"_",stratum,"_cohort_stats.txt")
 
   #terminal and log file output
   text = paste0("printing: summaries to: ", full_path)
@@ -25,7 +25,7 @@ print_summaries <- function(data_set,save_path, gender, phenotype, verbose=TRUE,
 
   #create summary file
   sink(file= full_path, append= TRUE)
-  cat("Summaries for ", phenotype, " ", gender, "\n", "\n")
+  cat("Summaries for ", phenotype, " ", stratum, "\n", "\n")
 
   #extract cohort names from data set
   cohort_names = as.character(unique(data_set$Cohort))
@@ -74,7 +74,7 @@ print_summaries <- function(data_set,save_path, gender, phenotype, verbose=TRUE,
 #' @param max_inflation (int) upper threshold values for \code{\link[bacon]{bacon}} inflation
 #' @param decimal_places (int) lower threshold for average number of decimal places
 #' @param save_path (string) place where the outputs are saved
-#' @param gender (string) gender currently analysed
+#' @param stratum (string) stratum currently analysed
 #' @param phenotype (string) phenotype currently analysed
 #' @param verbose (bool) TRUE: will print output to terminal FALSE: won't
 #' @param print_log (bool) TRUE: prints logs to log_path FALSE: won't
@@ -84,14 +84,14 @@ print_summaries <- function(data_set,save_path, gender, phenotype, verbose=TRUE,
 #'
 #' @export
 print_flags <- function(data_set, num_NA= 1000, min_beta=-2, max_beta=2, max_se=4, min_inflation=0.8, max_inflation=1.2, decimal_places=4,
-                        save_path, gender, phenotype, verbose=TRUE, print_log=FALSE, log_path="./log.txt")
+                        save_path, stratum, phenotype, verbose=TRUE, print_log=FALSE, log_path="./log.txt")
 {
   #sets number of decimal places to 12 digits
   options(digits=12)
 
   #extract cohort names from data set
   cohort_names = as.character(unique(data_set$Cohort))
-  full_path = paste0(save_path,phenotype,"_",gender,"_flags.txt")
+  full_path = paste0(save_path,phenotype,"_",stratum,"_flags.txt")
   #terminal and log file output
   text = paste0("printing: flag file to: ", full_path)
   if(verbose) {writeLines(text)}

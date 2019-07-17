@@ -13,7 +13,7 @@
 #' @param annotation_filepath (string) file path to annotation file (annotation file has to contain a 'Markername' column, has to be a tab separated file,
 #'                            comments have to be preceded by '#')
 #' @param phenotype (string) phenotype currently examined (for the forest plot name and label)
-#' @param gender (string) gender currently examined (for the forest plot and label)
+#' @param stratum (string) stratum currently examined (for the forest plot and label)
 #' @param print_log (bool) TRUE: print to log file FALSE: won't
 #' @param log_path (string) path to log file
 #' @param verbose (bool) TRUE: Prints output to terminal FALSE: won't
@@ -25,7 +25,7 @@
 #' @importFrom readr read_delim
 #' @export
 post_process <- function(result, combined_data, model, FDR, significance_level=0.05, plot_forest=TRUE, output_path="./", annotate_result=TRUE, annotation_filepath=NULL,
-                         phenotype=NULL, gender=NULL, print_log=FALSE, log_path="./", verbose=TRUE)
+                         phenotype=NULL, stratum=NULL, print_log=FALSE, log_path="./", verbose=TRUE)
 {
   #terminal and log file output
   text = "Running post processing on results"
@@ -69,8 +69,8 @@ post_process <- function(result, combined_data, model, FDR, significance_level=0
         #rerun model
         temp = metafor::rma(yi=temp_data$BETA, sei=temp_data$SE, method=model, slab=temp_data$Cohort)
         #save forest plot
-        png(paste0(output_path, phenotype, "_", gender, "_", relevant_id[i], "_forestplot.png"))
-        metafor::forest(temp, xlab=paste0("effect ", phenotype, " ", gender, " ", relevant_id[i]))
+        png(paste0(output_path, phenotype, "_", stratum, "_", relevant_id[i], "_forestplot.png"))
+        metafor::forest(temp, xlab=paste0("effect ", phenotype, " ", stratum, " ", relevant_id[i]))
         dev.off()
       }
     }

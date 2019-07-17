@@ -5,7 +5,7 @@
 #'                          columns: \itemize{
 #'                          \item{cohort}{: Name of the cohort}
 #'                          \item{phenotype}{: Name of the observed phenotype used in the file}
-#'                          \item{gender}{: Name of the gender used in the file}
+#'                          \item{stratum}{: Name of the stratum used in the file}
 #'                          \item{array_type}{: type of array used by the cohort. Can be 450 or EPIC}
 #'                          \item{probeID}{: Name of the column containing the probeIDs}
 #'                          \item{beta}{: Name of the column containing the effect sizes}
@@ -17,7 +17,7 @@
 #'                          \item{file_path}{: Full path to the file. Example: "/home/user/file_location/"}
 #'                          }
 #' @param phenotype (string) phenotype that should be analysed (has to appear in the summary$phenotype column)
-#' @param gender (string) gender that should be analysed (has to appear in the summary$gender column)
+#' @param stratum (string) stratum that should be analysed (has to appear in the summary$stratum column)
 #' @param cohort (string) if only certain cohorts of the summary file should be analysed (has to appear in the summary$cohort column)
 #' @param FDR (bool) TRUE: Add a column to the output with Bonferroni corrected p-values FALSE: won't
 #' @param annotation (bool) TRUE: Adds chromosome and MAPINFO column to output FALSE: won't
@@ -36,7 +36,7 @@
 #' @importFrom stats p.adjust
 
 #' @export
-load_files <- function(data_summary_path, phenotype, gender, cohort=NULL, FDR=TRUE, annotation = FALSE,
+load_files <- function(data_summary_path, phenotype, stratum, cohort=NULL, FDR=TRUE, annotation = FALSE,
                        anno_file_path= "./", verbose=TRUE, print_log=TRUE, log_path="./log.txt")
 {
   ##output
@@ -49,11 +49,11 @@ load_files <- function(data_summary_path, phenotype, gender, cohort=NULL, FDR=TR
   ##control step: check integrity of data_summary
   "%nin%" = Negate("%in%")
   data_summary_name = names(data_summary)
-  column_names = c("phenotype", "gender", "cohort", "file_path", "file_Name", "separator", "array_type")
+  column_names = c("phenotype", "stratum", "cohort", "file_path", "file_Name", "separator", "array_type")
   for (i in 1:length(column_names)) {if( column_names[i] %nin% data_summary_name) {stop(paste0(column_names[i], " column missing in data_summary"))}}
 
-  ##control step: check if gender and phenotype are present in data_summary
-  if(gender %nin% data_summary$gender) {stop(paste0(gender, " not appearing in the summary$gender column"))}
+  ##control step: check if stratum and phenotype are present in data_summary
+  if(stratum %nin% data_summary$stratum) {stop(paste0(stratum, " not appearing in the summary$stratum column"))}
   if(phenotype %nin% data_summary$phenotype) {stop(paste0(phenotype, " not appearing in the summary$phenotype column"))}
   if(!is.null(cohort) && !all(cohort %in% data_summary$cohort)) {stop("One of the cohort names not appearing in summary$cohort")}
 
@@ -69,9 +69,9 @@ load_files <- function(data_summary_path, phenotype, gender, cohort=NULL, FDR=TR
   {
     if(!is.null(cohort))
     {
-      if (data_summary$phenotype[i] == phenotype && data_summary$gender[i] == gender && data_summary$cohort[i] %in% cohort)
+      if (data_summary$phenotype[i] == phenotype && data_summary$stratum[i] == stratum && data_summary$cohort[i] %in% cohort)
       {
-        data_set_names = append(data_set_names, paste0(data_summary$cohort[i], "_", data_summary$phenotype[i], "_", data_summary$gender[i]))
+        data_set_names = append(data_set_names, paste0(data_summary$cohort[i], "_", data_summary$phenotype[i], "_", data_summary$stratum[i]))
         data_set_path = append(data_set_path, paste0(data_summary$file_path[i], data_summary$file_Name[i]))
         data_set_separator = append(data_set_separator, as.character(data_summary$separator[i]))
         data_set_position = append(data_set_position, i)
@@ -81,9 +81,9 @@ load_files <- function(data_summary_path, phenotype, gender, cohort=NULL, FDR=TR
     }
     else
     {
-      if (data_summary$phenotype[i] == phenotype && data_summary$gender[i] == gender)
+      if (data_summary$phenotype[i] == phenotype && data_summary$stratum[i] == stratum)
       {
-        data_set_names = append(data_set_names, paste0(data_summary$cohort[i], "_", data_summary$phenotype[i], "_", data_summary$gender[i]))
+        data_set_names = append(data_set_names, paste0(data_summary$cohort[i], "_", data_summary$phenotype[i], "_", data_summary$stratum[i]))
         data_set_path = append(data_set_path, paste0(data_summary$file_path[i], data_summary$file_Name[i]))
         data_set_separator = append(data_set_separator, as.character(data_summary$separator[i]))
         data_set_position = append(data_set_position, i)
