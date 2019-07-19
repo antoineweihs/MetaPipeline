@@ -4,7 +4,7 @@
 #'              entry point, it is advisable to check the source code it is advisable to check the source code to make sure the script is compatible. The
 #'              steps of the script are: load_files -> pre_filter entry point -> run_filter -> pre_plotting entry point -> plotting -> plotting chromosomes
 #'              -> pre_printing entry point -> printing summary -> printing flags -> final entry point
-#' @author Antoine Weihs <uni.antoine.weihs@@gmail.com>
+#' @author Antoine Weihs <antoine.weihs@@uni-greifswald.de>
 #' @param data_summary_path (string) path to the file that contains all the info of the cohorts. Has to include the following tab separated
 #'                          columns: \itemize{
 #'                          \item{\code{cohort}}{: Name of the cohort}

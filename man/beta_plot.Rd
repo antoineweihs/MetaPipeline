@@ -4,7 +4,7 @@
 \alias{beta_plot}
 \title{Beta plots}
 \usage{
-beta_plot(data_set, same_scale = TRUE, save_path, gender, phenotype,
+beta_plot(data_set, same_scale = TRUE, save_path, stratum, phenotype,
   trim = FALSE, verbose = TRUE, print_log = FALSE,
   log_path = "./log.txt")
 }
@@ -15,7 +15,7 @@ beta_plot(data_set, same_scale = TRUE, save_path, gender, phenotype,
 
 \item{save_path}{(string) place where the outputs are saved}
 
-\item{gender}{(string) gender currently analysed}
+\item{stratum}{(string) stratum currently analysed}
 
 \item{phenotype}{(string) phenotype currently analysed}
 
@@ -31,5 +31,5 @@ beta_plot(data_set, same_scale = TRUE, save_path, gender, phenotype,
 This function creates plots of the effect distributions. Used for the pre-meta quality control analysis.
 }
 \author{
-Antoine Weihs <uni.antoine.weihs@gmail.com>
+Antoine Weihs <antoine.weihs@uni-greifswald.de>
 }

@@ -1,6 +1,6 @@
 #' @title Filter data
 #' @description  This function filters the data, removing all sites that have a sample size below the threshold value
-#' @author Antoine Weihs <uni.antoine.weihs@@gmail.com>
+#' @author Antoine Weihs <antoine.weihs@@uni-greifswald.de>
 #' @param data_set (data.frame) data set created by \code{\link{load_files}}
 #' @param percentage (int) percentage of the maximal sample size that has to be present in the sample site of each site
 #' @param run (bool) TRUE: this function is applied, FALSE: this function won't be applied

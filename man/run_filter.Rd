@@ -27,5 +27,5 @@ filtered \code{data_set} NOTE: Sites with NA in effect or standard error column 
 This function filters the data, removing all sites that have a sample size below the threshold value
 }
 \author{
-Antoine Weihs <uni.antoine.weihs@gmail.com>
+Antoine Weihs <antoine.weihs@uni-greifswald.de>
 }

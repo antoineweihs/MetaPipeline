@@ -1,5 +1,5 @@
 #' @title post process for FE or REML Random Effect meta analysis
-#' @author Antoine Weihs <uni.antoine.weihs@@gmail.com>
+#' @author Antoine Weihs <antoine.weihs@@uni-greifswald.de>
 #' @description post processing function for \code{FE} and \code{REML} model which draws a forest plot for all site whose FDR adjusted p-value is above \code{significance_level}
 #'
 #' @param result (data.frame) result from \code{\link{meta}} using FE and including FDR
@@ -8,6 +8,7 @@
 #' @param FDR (bool) TURE: FDR values are used instead of p-values (input needs to contain an FDR column) FALSE: p-values are used
 #' @param significance_level (double) FDR significance level for cut off
 #' @param plot_forest (bool) TRUE: Draws a forest plot of the top hits FALSE: won't
+#' @param plot_manhattan (bool) TRUE: will create a manhattan plot of the results FALSE: won't
 #' @param output_path (string) output path for the forest plot
 #' @param annotate_result (bool) TRUE: will merge output file with annoation file FALSE: won't
 #' @param annotation_filepath (string) file path to annotation file (annotation file has to contain a 'Markername' column, has to be a tab separated file,
@@ -24,8 +25,8 @@
 #' @importFrom metafor rma forest
 #' @importFrom readr read_delim
 #' @export
-post_process <- function(result, combined_data, model, FDR, significance_level=0.05, plot_forest=TRUE, output_path="./", annotate_result=TRUE, annotation_filepath=NULL,
-                         phenotype=NULL, stratum=NULL, print_log=FALSE, log_path="./", verbose=TRUE)
+post_process <- function(result, combined_data, model, FDR, significance_level=0.05, plot_forest=TRUE, plot_manhattan=TRUE, output_path="./", annotate_result=TRUE,
+                         annotation_filepath=NULL, phenotype=NULL, stratum=NULL, print_log=FALSE, log_path="./", verbose=TRUE)
 {
   #terminal and log file output
   text = "Running post processing on results"
@@ -76,6 +77,41 @@ post_process <- function(result, combined_data, model, FDR, significance_level=0
     }
   }
 
+  if(plot_manhattan & FDR)
+  {
+    text = "Plotting double Manhattan plot with FDR values"
+    if(verbose) {writeLines(text)}
+    if(print_log) {cat(text, file=log_path, append=TRUE, sep="\n")}
+
+    temp_data = data.frame(Markername = result$Markername, Estimate_phenotype = result$Estimate_phenotype, Pval_phenotype = result$Pval_phenotype)
+    temp_data = merge(temp_data, Masterfile, by="Markername", all.x=TRUE, all.y=FALSE)
+    test = double_manhattan(temp_data, chr="CHR", bp="MAPINFO", p="Pval_phenotype", markername="Markername", beta="Estimate_phenotype", FDRcorr=FDR, cutoff=significance_level,
+                            strict_cutoff=NULL, title=paste0(phenotype, " ", stratum, " Manhattan plot"), logP=T, marktop=T, save_plot=T, save_path=output_path)
+    if(test == 1)
+    {
+      text = "Post Process error: result vector is empty. Skipping manhatan plot"
+      if(verbose) {writeLines(text)}
+      if(print_log) {cat(text, file=log_path, append=TRUE, sep="\n")}
+    }
+  }
+  if(plot_manhattan & FDR == FALSE)
+  {
+    text = "Plotting double Manhattan plot with P-values"
+    if(verbose) {writeLines(text)}
+    if(print_log) {cat(text, file=log_path, append=TRUE, sep="\n")}
+
+    temp_data = data.frame(Markername = result$Markername, Estimate_phenotype = result$Estimate_phenotype, Pval_phenotype = result$Pval_phenotype)
+    temp_data = merge(temp_data, Masterfile, by="Markername", all.x=TRUE, all.y=FALSE)
+    test = double_manhattan(temp_data, chr="CHR", bp="BP", p="Pval_phenotype", markername="Markername", beta="Estimate_phenotype", FDRcorr=FDR, cutoff=significance_level,
+                            strict_cutoff=NULL, title=paste0(phenotype, " ", stratum, " Manhattan plot"), logP=T, marktop=T, save_plot=T, save_path=output_path)
+    if(test == 1)
+    {
+      text = "Post Process error: result vector is empty. Skipping manhatan plot"
+      if(verbose) {writeLines(text)}
+      if(print_log) {cat(text, file=log_path, append=TRUE, sep="\n")}
+    }
+  }
+
   if(annotate_result)
   {
     text = "Annotating results"
@@ -84,7 +120,7 @@ post_process <- function(result, combined_data, model, FDR, significance_level=0
 
     if(is.null(annotation_filepath))
     {
-      text = "No annotation file given, skipping annotation step"
+      text = "Post Process error: No annotation file given, skipping annotation step"
       if(verbose) {writeLines(text)}
       if(print_log) {cat(text, file=log_path, append=TRUE, sep="\n")}
     }

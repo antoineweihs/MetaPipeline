@@ -6,7 +6,7 @@
 \usage{
 print_flags(data_set, num_NA = 1000, min_beta = -2, max_beta = 2,
   max_se = 4, min_inflation = 0.8, max_inflation = 1.2,
-  decimal_places = 4, save_path, gender, phenotype, verbose = TRUE,
+  decimal_places = 4, save_path, stratum, phenotype, verbose = TRUE,
   print_log = FALSE, log_path = "./log.txt")
 }
 \arguments{
@@ -28,7 +28,7 @@ print_flags(data_set, num_NA = 1000, min_beta = -2, max_beta = 2,
 
 \item{save_path}{(string) place where the outputs are saved}
 
-\item{gender}{(string) gender currently analysed}
+\item{stratum}{(string) stratum currently analysed}
 
 \item{phenotype}{(string) phenotype currently analysed}
 
@@ -54,5 +54,5 @@ This function prints flags to an output file. Used for the pre-meta quality cont
               }
 }
 \author{
-Antoine Weihs <uni.antoine.weihs@gmail.com>
+Antoine Weihs <antoine.weihs@uni-greifswald.de>
 }

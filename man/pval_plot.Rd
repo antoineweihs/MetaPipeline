@@ -4,7 +4,7 @@
 \alias{pval_plot}
 \title{Pvalue plots}
 \usage{
-pval_plot(data_set, same_scale = TRUE, save_path, gender, phenotype,
+pval_plot(data_set, same_scale = TRUE, save_path, stratum, phenotype,
   trim = FALSE, verbose = TRUE, print_log = FALSE,
   log_path = "./log.txt")
 }
@@ -15,7 +15,7 @@ pval_plot(data_set, same_scale = TRUE, save_path, gender, phenotype,
 
 \item{save_path}{(string) place where the outputs are saved}
 
-\item{gender}{(string) gender currently analysed}
+\item{stratum}{(string) stratum currently analysed}
 
 \item{phenotype}{(string) phenotype currently analysed}
 
@@ -31,5 +31,5 @@ pval_plot(data_set, same_scale = TRUE, save_path, gender, phenotype,
 This function creates plots of the p-value distributions. Used for the pre-meta quality control analysis.
 }
 \author{
-Antoine Weihs <uni.antoine.weihs@gmail.com>
+Antoine Weihs <antoine.weihs@uni-greifswald.de>
 }

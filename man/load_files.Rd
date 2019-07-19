@@ -4,7 +4,7 @@
 \alias{load_files}
 \title{Load files for this package}
 \usage{
-load_files(data_summary_path, phenotype, gender, cohort = NULL,
+load_files(data_summary_path, phenotype, stratum, cohort = NULL,
   FDR = TRUE, annotation = FALSE, anno_file_path = "./",
   verbose = TRUE, print_log = TRUE, log_path = "./log.txt")
 }
@@ -13,7 +13,7 @@ load_files(data_summary_path, phenotype, gender, cohort = NULL,
 columns: \itemize{
 \item{cohort}{: Name of the cohort}
 \item{phenotype}{: Name of the observed phenotype used in the file}
-\item{gender}{: Name of the gender used in the file}
+\item{stratum}{: Name of the stratum used in the file}
 \item{array_type}{: type of array used by the cohort. Can be 450 or EPIC}
 \item{probeID}{: Name of the column containing the probeIDs}
 \item{beta}{: Name of the column containing the effect sizes}
@@ -27,7 +27,7 @@ columns: \itemize{
 
 \item{phenotype}{(string) phenotype that should be analysed (has to appear in the summary$phenotype column)}
 
-\item{gender}{(string) gender that should be analysed (has to appear in the summary$gender column)}
+\item{stratum}{(string) stratum that should be analysed (has to appear in the summary$stratum column)}
 
 \item{cohort}{(string) if only certain cohorts of the summary file should be analysed (has to appear in the summary$cohort column)}
 
@@ -52,5 +52,5 @@ data frame used by the rest of the package containing the combined data of the l
 This function imports the required files and modifies them in such a way, that they can be used by the package.
 }
 \author{
-Antoine Weihs <uni.antoine.weihs@gmail.com>
+Antoine Weihs <antoine.weihs@uni-greifswald.de>
 }

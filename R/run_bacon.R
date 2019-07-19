@@ -1,6 +1,6 @@
 #' @title Apply BACON
 #' @description This function uses the \code{\link[bacon]{bacon}} package to calculate the inflation and bias and modifies the input data if inflation is above 1
-#' @author Antoine Weihs <uni.antoine.weihs@@gmail.com>
+#' @author Antoine Weihs <antoine.weihs@@uni-greifswald.de>
 #' @param data_set (data.frame) data set created by \code{\link{load_files}}
 #' @param run (bool) TRUE: this function is applied, FALSE: this function won't be applied
 #' @param print_log (bool) TRUE: print to log file FALSE: won't

@@ -1,6 +1,6 @@
 #' @title Load files for this package
 #' @description This function imports the required files and modifies them in such a way, that they can be used by the package.
-#' @author Antoine Weihs <uni.antoine.weihs@@gmail.com>
+#' @author Antoine Weihs <antoine.weihs@@uni-greifswald.de>
 #' @param data_summary_path (string) path to the file that contains all the info of the cohorts. Has to include the following tab separated
 #'                          columns: \itemize{
 #'                          \item{cohort}{: Name of the cohort}

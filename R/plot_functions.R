@@ -1,6 +1,6 @@
 #' @title Beta plots
 #' @description  This function creates plots of the effect distributions. Used for the pre-meta quality control analysis.
-#' @author Antoine Weihs <uni.antoine.weihs@@gmail.com>
+#' @author Antoine Weihs <antoine.weihs@@uni-greifswald.de>
 #' @param data_set (data.frame) data set created by \code{\link{load_files}}
 #' @param same_scale (bool) TRUE: the separate plots are all drawn using the same axis scales FALSE: the separate plots are all drawn using different scales
 #' @param save_path (string) place where the outputs are saved
@@ -66,7 +66,7 @@ beta_plot <- function(data_set, same_scale=TRUE, save_path, stratum, phenotype, 
 
 #' @title Pvalue plots
 #' @description  This function creates plots of the p-value distributions. Used for the pre-meta quality control analysis.
-#' @author Antoine Weihs <uni.antoine.weihs@@gmail.com>
+#' @author Antoine Weihs <antoine.weihs@@uni-greifswald.de>
 #' @param data_set (data.frame) data set created by \code{\link{load_files}}
 #' @param same_scale (bool) True: the separate plots are all drawn using the same axis scales False: the separate plots are all drawn using different scales
 #' @param save_path (string) place where the outputs are saved
@@ -133,7 +133,7 @@ pval_plot <- function(data_set,same_scale=TRUE, save_path, stratum, phenotype, t
 
 #' @title Standard error plots
 #' @description  This function creates plots of the standard error distributions. Used for the pre-meta quality control analysis.
-#' @author Antoine Weihs <uni.antoine.weihs@@gmail.com>
+#' @author Antoine Weihs <antoine.weihs@@uni-greifswald.de>
 #' @param data_set (data.frame) data set created by \code{\link{load_files}}
 #' @param same_scale (bool) True: the separate plots are all drawn using the same axis scales False: the separate plots are all drawn using different scales
 #' @param save_path (string) place where the outputs are saved
@@ -200,7 +200,7 @@ se_plot <- function(data_set,same_scale=TRUE, save_path, stratum, phenotype, tri
 #' @title Chromosome plots
 #' @description This function creates plots visualising and quantifying the CpG site locations within the chromosomes. Used for the pre-meta quality
 #'              control analysis.
-#' @author Antoine Weihs <uni.antoine.weihs@@gmail.com>
+#' @author Antoine Weihs <antoine.weihs@@uni-greifswald.de>
 #' @param data_set (data.frame) data set created by \code{\link{load_files}}
 #' @param save_path (string) place where the outputs are saved
 #' @param stratum (string) stratum currently analysed
@@ -275,7 +275,7 @@ chromosome_plot <- function(data_set,save_path, stratum, phenotype, verbose=TRUE
 
 #' @title SE vs Size plots
 #' @description This function creates plots the median cohort size versus the median cohort standard error. Used for the pre-meta quality control analysis.
-#' @author Antoine Weihs <uni.antoine.weihs@@gmail.com>
+#' @author Antoine Weihs <antoine.weihs@@uni-greifswald.de>
 #' @param data_set (data.frame) data set created by \code{\link{load_files}}
 #' @param save_path (string) place where the outputs are saved
 #' @param stratum (string) stratum currently analysed
@@ -319,47 +319,39 @@ se_vs_size_plot <- function(data_set,save_path, stratum, phenotype, verbose=TRUE
 #' @title double Manhattan Plot
 #' @description This function creates a double manahattan plot for \code{\link{post_process}}
 #'              The base code was extracted from the manhattan() function from the qqman r package
-#' @author Antoine Weihs <uni.antoine.weihs@@gmail.com>
+#' @author Antoine Weihs <antoine.weihs@@uni-greifswald.de>
 #' @references Stephen D. Turner, 2018, "qqman: an R package for visualizing GWAS results usinf Q-Q and manhattan plots", Jorunal of Open Source Software, 3(25), 731, doi:10:21105/joss.00731
+#' @param x (data.frame) input data set
+#' @param chr (string) name of the coloumn in \code{x} that contains the chromosome numbers
+#' @param bp (string) name of the coloumn in \code{x} that contains the genome position
+#' @param p (string) name of the coloumn in \code{x} that contains the p-values
+#' @param markername (string) name of the column in \code{x} that contains the cpg site names
+#' @param col (string vector) name of the two colours the manhattan plot shall be coloured in
+#' @param FDRcorr (bool) TRUE: will perform an FDR correction on the p-values and use these FALSE: will use the p-values
+#' @param cutoff (double) significance level
+#' @param strict_cutoff (double) strict significance level
+#' @param title (string) title of the manhattan plot
+#' @param logp (bool) TRUE will use a logarithmic scale on the y-axis FALSE: won't
+#' @param marktop (bool) TRUE: will label the cpg sites above the cutoff FALSE: won't
+#' @param save_plot (bool) TRUE: saves the plot to \code{save_path} FALSE: won't
+#' @param save_path (string) save path for the manhattan plot
+#'
 #' @importFrom ggplot2 ggplot geom_point scale_color_manual geom_text xlab ggsave aes ggtitle scale_x_continuous geom_hline theme element_blank ylab
 #'
 #' @export
-double_manhattan <- function(x, chr="CHR", bp="BP", p="P", markername="MARKERNAME", beta="BETA", genename="GENENAME",
+double_manhattan <- function(x, chr="CHR", bp="BP", p="P", markername="MARKERNAME", beta="BETA",
                              col=c("gray10", "gray60"), FDRcorr = TRUE,
                              cutoff=0.05, strict_cutoff=0.001, title = "Manhattan plot",
                              logp=TRUE, marktop = FALSE, save_plot=TRUE, save_path="./",...)
 {
-  # Check for sensible dataset
-  ## Make sure you have chr, bp, beta and p columns.
-  if (!(chr %in% names(x))) stop(paste("Column", chr, "not found!"))
-  if (!(bp %in% names(x))) stop(paste("Column", bp, "not found!"))
-  if (!(p %in% names(x))) stop(paste("Column", p, "not found!"))
-  if (!(beta %in% names(x))) stop(paste("Column", beta, "not found!"))
-  ## make sure at least markername is present if marktop=TRUE
-  if (!(markername %in% names(x)) & marktop) stop(paste("No MARKERNAME column found. Required if marktop=TRUE"))
-  ## warn if you don't have a markername column
-  if (!(markername %in% names(x))) warning(paste("No MARKERNAME column found. OK unless marktop=FALSE."))
-  if (!(genename %in% names(x))) warning(paste("No GENENAME column found. Will use markername instead if required"))
-  ## make sure chr, bp, beta and p columns are numeric.
-  if (!is.numeric(x[[chr]])) stop(paste(chr, "column should be numeric. Do you have 'X', 'Y', 'MT', etc? If so change to numbers and try again."))
-  if (!is.numeric(x[[bp]])) stop(paste(bp, "column should be numeric."))
-  if (!is.numeric(x[[p]])) stop(paste(p, "column should be numeric."))
-  if (!is.numeric(x[[beta]])) stop(paste(beta, "column should be numeric."))
 
+  temp <- function(x) return(as.numeric(as.character(x)))
+  d = data.frame(CHR=temp(x[[chr]]), BP=temp(x[[bp]]), P=temp(x[[p]]), beta=temp(x[[beta]]), pos = rep(NA, length(x[[bp]])),
+                 index = rep(NA, length(x[[bp]])), MARKERNAME=x[[markername]],  stringsAsFactors = FALSE)
 
-  # If the input data frame has a MARKERNAME column, add it to the new data frame you're creating.
-  if (!is.null(x[[markername]]) & !is.null(x[[genename]]))
+  if(length(d$CHR) == 0)
   {
-    d = data.frame(CHR=x[[chr]], BP=x[[bp]], P=x[[p]], beta=x[[beta]], pos = NA, index = NA ,MARKERNAME=x[[markername]], GENENAME=x[[genename]],  stringsAsFactors = FALSE)
-    d$GENENAME[is.na(d$GENENAME)] = d$MARKERNAME[is.na(d$GENENAME)]
-  }
-  else if (!is.null(x[[markername]]) & is.null(x[[genename]]))
-  {
-    d = data.frame(CHR=x[[chr]], BP=x[[bp]], P=x[[p]], beta=x[[beta]], pos = NA, index = NA ,MARKERNAME=x[[markername]], GENENAME=x[[markername]],  stringsAsFactors = FALSE)
-  }
-  else
-  {
-    d = data.frame(CHR=x[[chr]], BP=x[[bp]], P=x[[p]], beta=x[[beta]], pos = NA, index = NA, MARKERNAME=NA)
+    return(1)
   }
 
   d = d[!is.na(d$beta),]
@@ -370,7 +362,7 @@ double_manhattan <- function(x, chr="CHR", bp="BP", p="P", markername="MARKERNAM
   # Set positions, ticks, and labels for plotting
   ## Sort and keep only values where is numeric.
   d <- d[order(d$CHR, d$BP), ]
-  if (logp) {   ##changed here
+  if (logp) {
     d$P = d$P + 1E-323  ##kann ich das machen? (falls p wert = 0)
     d$logp <- -log10(d$P)
     if (!is.null(cutoff)) cutoff = -log10(cutoff)
@@ -435,7 +427,8 @@ double_manhattan <- function(x, chr="CHR", bp="BP", p="P", markername="MARKERNAM
   }
 
   myplot = myplot + ggplot2::scale_x_continuous(label=labs, breaks=ticks) + ggplot2::geom_hline(yintercept=0, color="white", alpha=0.2)
-  myplot = myplot + ggplot2::theme(legend.position="none", panel.border=ggplot2::element_blank(), panel.grid.major.x=ggplot2::element_blank(), panel.grid.minor.x=ggplot2::element_blank())
+  myplot = myplot + ggplot2::theme(legend.position="none", panel.border=ggplot2::element_blank(), panel.grid.major.x=ggplot2::element_blank(),
+                                   panel.grid.minor.x=ggplot2::element_blank())
   myplot = myplot + ggplot2::ggtitle(title)
 
   if (logp & FDRcorr) myplot = myplot + ggplot2::ylab("-log10(FDR) * effect direction")
@@ -448,4 +441,6 @@ double_manhattan <- function(x, chr="CHR", bp="BP", p="P", markername="MARKERNAM
   if (!is.null(strict_cutoff)) myplot = myplot + ggplot2::geom_hline(yintercept=strict_cutoff, col="red") + ggplot2::geom_hline(yintercept=-strict_cutoff, col="red")
 
   if (save_plot) ggplot2::ggsave(paste0(save_path,"_manhattan_plot.png"), plot=myplot, width=15.5, height=8.61, units="cm", dpi="retina")
+
+  return(0)
 }

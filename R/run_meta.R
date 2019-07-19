@@ -4,7 +4,7 @@
 #'              to make sure the script is compatible. The steps of the script are: load files -> pre-filter entry point -> run filter -> pre-bacon
 #'              entry point -> run bacon -> pre-meta-analysis entry point -> run meta-analysis -> post-meta-analysis entry point -> post process
 #'              -> final entry point -> save results
-#' @author Antoine Weihs <uni.antoine.weihs@@gmail.com>
+#' @author Antoine Weihs <antoine.weihs@@uni-greifswald.de>
 #' @param phenotype (string) phenotype that should be analysed (has to appear in the summary$Phenotype column)
 #' @param stratum (string) stratum that should be analysed (has to appear in the summary$stratum column)
 #' @param num_cores (int) number of cores that should be used for the meta analysis (only works on Linux)
@@ -48,6 +48,7 @@
 #' @param post_replicates (int) POSTPROCESS: if \code{run_post_process} is TRUE and \code{model} is BAYES -> number of replicates performed during the
 #'                        posterior probability check (n >> 100 recommended)
 #' @param plot_forest (bool) POSTPROCESS: TRUE: will create forest plot saved to output_path if run_post_process is TRUE FALSE: won't
+#' @param plot_manhattan (bool) POSTPROCESS: TRUE: will create a manhattan plot of the results if model is FE or REML FALSE: won't
 #' @param annotate_result (bool) POSTPROCESS: TRUE: will merge output file with annoation file FALSE: won't
 #' @param annotation_filepath (string) POSTPROCESS: file path to annotation file (annotation file has to contain a 'Markername' column, has to be a tab separated file,
 #'                            comments have to be preceded by '#')
@@ -76,7 +77,7 @@ run_meta <- function(	phenotype,
                       pre_meta_step=FALSE, pre_meta_path,
                       post_meta_step=FALSE, post_meta_path,
                       run_post_process=FALSE, run_posterior_Check = TRUE, post_sigLevel = 0.05, post_cutoff=0.95, post_replicates=1000,
-                      plot_forest=FALSE, annotate_result = FALSE, annotation_filepath=NULL,
+                      plot_forest=FALSE, plot_manhattan=TRUE, annotate_result = FALSE, annotation_filepath=NULL,
                       final_step=FALSE, final_path,
                       print_log=TRUE,
                       save_RData=FALSE,
@@ -99,7 +100,8 @@ run_meta <- function(	phenotype,
            paste0("   filter: ", filter), paste0("   FDR: ", FDR), paste0("   pre_meta_step: ", pre_meta_step),
            if(pre_meta_step) {paste0("   pre_meta_path: ", pre_meta_path)}, paste0("   post_meta_step: ", post_meta_step),
            if(post_meta_step) {paste0("   post_meta_path: ", post_meta_path)}, paste0("   run_post_process: ", run_post_process),
-           if(run_post_process) {paste0("   plot_forest: ", plot_forest)}, if(run_post_process) {paste0("   annotate_result: ", annotate_result)},
+           if(run_post_process) {paste0("   plot_forest: ", plot_forest)}, if(run_post_process) {paste0("   plot_manhattan: ", plot_manhattan)},
+           if(run_post_process) {paste0("   annotate_result: ", annotate_result)},
            if(run_post_process) {paste0("   annotation_filepath: ", annotation_filepath)}, if(run_post_process) {paste0("   run_posterior_Check: ", run_posterior_Check)},
            if(run_post_process) {paste0("   post_sigLevel: ", post_sigLevel)}, if(run_post_process) {paste0("   post_cutoff: ", post_cutoff)},
            if(run_post_process) {paste0("   post_replicates: ", post_replicates)}, paste0("   final_step: ", final_step),
@@ -189,8 +191,9 @@ run_meta <- function(	phenotype,
     if(verbose) {writeLines(text)}
     if(print_log) {cat(text, file=log_path, append=TRUE, sep="\n")}
 
-    meta_result = post_process(result=meta_result, combined_data=combined_data, model=model, FDR=FDR, significance_level=post_sigLevel, plot_forest=plot_forest, annotate_result=annotate_result,
-                  annotation_filepath=annotation_filepath, output_path=output_path, phenotype=phenotype, stratum=stratum, print_log=print_log,  log_path=log_path, verbose=verbose)
+    meta_result = post_process(result=meta_result, combined_data=combined_data, model=model, FDR=FDR, significance_level=post_sigLevel, plot_forest=plot_forest,
+                               plot_manhattan=plot_manhattan, annotate_result=annotate_result, annotation_filepath=annotation_filepath, output_path=output_path,
+                               phenotype=phenotype, stratum=stratum, print_log=print_log,  log_path=log_path, verbose=verbose)
 
     ## terminal and log file output
     text = c(" ")

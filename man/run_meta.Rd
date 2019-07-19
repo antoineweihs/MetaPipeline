@@ -4,7 +4,7 @@
 \alias{run_meta}
 \title{Meta-analysis pipeline}
 \usage{
-run_meta(phenotype, gender, num_cores = 1, model = "FE",
+run_meta(phenotype, stratum, num_cores = 1, model = "FE",
   data_summary_path = "/home/weihsa/data/Thyroid_Cohorts/Cohort_Summary/summary.txt",
   cohort = NULL, cpg_filter = NULL, pre_bacon_step = FALSE,
   pre_bacon_path, apply_bacon = TRUE, pre_filter_step = FALSE,
@@ -12,15 +12,16 @@ run_meta(phenotype, gender, num_cores = 1, model = "FE",
   pre_meta_step = FALSE, pre_meta_path, post_meta_step = FALSE,
   post_meta_path, run_post_process = FALSE, run_posterior_Check = TRUE,
   post_sigLevel = 0.05, post_cutoff = 0.95, post_replicates = 1000,
-  plot_forest = FALSE, annotate_result = FALSE,
-  annotation_filepath = NULL, final_step = FALSE, final_path,
-  print_log = TRUE, save_RData = FALSE, save_csvData = FALSE,
-  output_path = "./", verbose = TRUE)
+  plot_forest = FALSE, plot_manhattan = TRUE,
+  annotate_result = FALSE, annotation_filepath = NULL,
+  final_step = FALSE, final_path, print_log = TRUE,
+  save_RData = FALSE, save_csvData = FALSE, output_path = "./",
+  verbose = TRUE)
 }
 \arguments{
 \item{phenotype}{(string) phenotype that should be analysed (has to appear in the summary$Phenotype column)}
 
-\item{gender}{(string) gender that should be analysed (has to appear in the summary$Gender column)}
+\item{stratum}{(string) stratum that should be analysed (has to appear in the summary$stratum column)}
 
 \item{num_cores}{(int) number of cores that should be used for the meta analysis (only works on Linux)}
 
@@ -31,7 +32,7 @@ run_meta(phenotype, gender, num_cores = 1, model = "FE",
 columns: \itemize{
 \item{\code{cohort}}{: Name of the cohort}
 \item{\code{phenotype}}{: Name of the observed phenotype used in the file}
-\item{\code{gender}}{: Name of the gender used in the file}
+\item{\code{stratum}}{: Name of the stratum used in the file}
 \item{\code{array_type}}{: type of array used by the cohort. Can be 450 or EPIC}
 \item{\code{probeID}}{: Name of the column containing the probeIDs}
 \item{\code{beta}}{: Name of the column containing the effect sizes}
@@ -86,6 +87,8 @@ posterior probability check (n >> 100 recommended)}
 
 \item{plot_forest}{(bool) POSTPROCESS: TRUE: will create forest plot saved to output_path if run_post_process is TRUE FALSE: won't}
 
+\item{plot_manhattan}{(bool) POSTPROCESS: TRUE: will create a manhattan plot of the results if model is FE or REML FALSE: won't}
+
 \item{annotate_result}{(bool) POSTPROCESS: TRUE: will merge output file with annoation file FALSE: won't}
 
 \item{annotation_filepath}{(string) POSTPROCESS: file path to annotation file (annotation file has to contain a 'Markername' column, has to be a tab separated file,
@@ -116,5 +119,5 @@ Main script that handles the meta analysis. The script is written in a modular f
              -> final entry point -> save results
 }
 \author{
-Antoine Weihs <uni.antoine.weihs@gmail.com>
+Antoine Weihs <antoine.weihs@uni-greifswald.de>
 }

@@ -1,6 +1,6 @@
 #' @title Meta-analysis function
 #' @description Function that performs the actual meta-analysis
-#' @author Antoine Weihs <uni.antoine.weihs@@gmail.com>
+#' @author Antoine Weihs <antoine.weihs@@uni-greifswald.de>
 #' @param input_data (data.frame) data set created by \code{\link{load_files}}
 #' @param test_run (bool) FOR DEBUG TRUE: only the first \code{test_run_length} sites are analysed FALSE: everything is analysed
 #' @param test_run_length FOR DEBUG (int) number of site to be run when \code{test_run} is TRUE

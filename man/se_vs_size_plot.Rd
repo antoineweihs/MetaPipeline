@@ -4,7 +4,7 @@
 \alias{se_vs_size_plot}
 \title{SE vs Size plots}
 \usage{
-se_vs_size_plot(data_set, save_path, gender, phenotype, verbose = TRUE,
+se_vs_size_plot(data_set, save_path, stratum, phenotype, verbose = TRUE,
   print_log = FALSE, log_path = "./log.txt")
 }
 \arguments{
@@ -12,7 +12,7 @@ se_vs_size_plot(data_set, save_path, gender, phenotype, verbose = TRUE,
 
 \item{save_path}{(string) place where the outputs are saved}
 
-\item{gender}{(string) gender currently analysed}
+\item{stratum}{(string) stratum currently analysed}
 
 \item{phenotype}{(string) phenotype currently analysed}
 
@@ -26,5 +26,5 @@ se_vs_size_plot(data_set, save_path, gender, phenotype, verbose = TRUE,
 This function creates plots the median cohort size versus the median cohort standard error. Used for the pre-meta quality control analysis.
 }
 \author{
-Antoine Weihs <uni.antoine.weihs@gmail.com>
+Antoine Weihs <antoine.weihs@uni-greifswald.de>
 }

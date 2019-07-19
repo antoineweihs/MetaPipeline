@@ -7,7 +7,7 @@
 bayes_post_process(result, combined_data, run_posterior_Check = TRUE,
   cutoff = 0.95, replicates = 1000, plot_forest = TRUE,
   output_path = "./", annotate_result = TRUE,
-  annotation_filepath = NULL, phenotype = NULL, gender = NULL,
+  annotation_filepath = NULL, phenotype = NULL, stratum = NULL,
   print_log = FALSE, log_path = "./", verbose = TRUE,
   num_cores = NULL)
 }
@@ -33,7 +33,7 @@ comments have to be preceded by '#')}
 
 \item{phenotype}{(string) phenotype used in the analysis}
 
-\item{gender}{(string) gender used in the analysis}
+\item{stratum}{(string) stratum used in the analysis}
 
 \item{print_log}{(bool) TRUE: print to log file FALSE: won't}
 
@@ -57,5 +57,5 @@ post processing function, that, if(\code{plot_forest} is TRUE plots forest plots
              if \code{run_posterior_check} is TRUE, runs a posterior predictive check on the results. NOTE: Beware of significant runtime
 }
 \author{
-Antoine Weihs <uni.antoine.weihs@gmail.com>
+Antoine Weihs <antoine.weihs@uni-greifswald.de>
 }

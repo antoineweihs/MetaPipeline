@@ -1,5 +1,5 @@
 #' @title Save file functions
-#' @author Antoine Weihs <uni.antoine.weihs@@gmail.com>
+#' @author Antoine Weihs <antoine.weihs@@uni-greifswald.de>
 #' @description functions that will save files as *.RData or *.csv
 #' @param data (any) data set to be saved
 #' @param type (string) either \code{csv} or \code{rdata}. File type \code{data} should be saved as

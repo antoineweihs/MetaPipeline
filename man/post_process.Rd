@@ -5,10 +5,10 @@
 \title{post process for FE or REML Random Effect meta analysis}
 \usage{
 post_process(result, combined_data, model, FDR,
-  significance_level = 0.05, plot_forest = TRUE, output_path = "./",
-  annotate_result = TRUE, annotation_filepath = NULL,
-  phenotype = NULL, gender = NULL, print_log = FALSE,
-  log_path = "./", verbose = TRUE)
+  significance_level = 0.05, plot_forest = TRUE,
+  plot_manhattan = TRUE, output_path = "./", annotate_result = TRUE,
+  annotation_filepath = NULL, phenotype = NULL, stratum = NULL,
+  print_log = FALSE, log_path = "./", verbose = TRUE)
 }
 \arguments{
 \item{result}{(data.frame) result from \code{\link{meta}} using FE and including FDR}
@@ -23,6 +23,8 @@ post_process(result, combined_data, model, FDR,
 
 \item{plot_forest}{(bool) TRUE: Draws a forest plot of the top hits FALSE: won't}
 
+\item{plot_manhattan}{(bool) TRUE: will create a manhattan plot of the results FALSE: won't}
+
 \item{output_path}{(string) output path for the forest plot}
 
 \item{annotate_result}{(bool) TRUE: will merge output file with annoation file FALSE: won't}
@@ -32,7 +34,7 @@ comments have to be preceded by '#')}
 
 \item{phenotype}{(string) phenotype currently examined (for the forest plot name and label)}
 
-\item{gender}{(string) gender currently examined (for the forest plot and label)}
+\item{stratum}{(string) stratum currently examined (for the forest plot and label)}
 
 \item{print_log}{(bool) TRUE: print to log file FALSE: won't}
 
@@ -48,5 +50,5 @@ data.frame containing the original \code{result} data set if \code{annotate_resu
 post processing function for \code{FE} and \code{REML} model which draws a forest plot for all site whose FDR adjusted p-value is above \code{significance_level}
 }
 \author{
-Antoine Weihs <uni.antoine.weihs@gmail.com>
+Antoine Weihs <antoine.weihs@uni-greifswald.de>
 }

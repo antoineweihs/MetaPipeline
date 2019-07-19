@@ -25,5 +25,5 @@ run_bacon(data_set, run = TRUE, print_log = FALSE,
 This function uses the \code{\link[bacon]{bacon}} package to calculate the inflation and bias and modifies the input data if inflation is above 1
 }
 \author{
-Antoine Weihs <uni.antoine.weihs@gmail.com>
+Antoine Weihs <antoine.weihs@uni-greifswald.de>
 }

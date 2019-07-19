@@ -1,5 +1,5 @@
 #' @title Bayes meta-analysis post process
-#' @author Antoine Weihs <uni.antoine.weihs@@gmail.com>
+#' @author Antoine Weihs <antoine.weihs@@uni-greifswald.de>
 #' @description post processing function, that, if(\code{plot_forest} is TRUE plots forest plots of the sites whose effect posterior is above \code{cutoff} and,
 #'              if \code{run_posterior_check} is TRUE, runs a posterior predictive check on the results. NOTE: Beware of significant runtime
 #' @param result (data.frame) result from \code{\link{meta}} using the Bayesian model

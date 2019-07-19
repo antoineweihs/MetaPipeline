@@ -84,5 +84,5 @@ data.frame containing the results of the meta-analysis. If the model is FE or RE
 Function that performs the actual meta-analysis
 }
 \author{
-Antoine Weihs <uni.antoine.weihs@gmail.com>
+Antoine Weihs <antoine.weihs@uni-greifswald.de>
 }

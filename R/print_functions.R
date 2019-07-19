@@ -1,6 +1,6 @@
 #' @title Print Summaries
 #' @description  This function prints summary statistics to an output file. Used for the pre-meta quality control analysis.
-#' @author Antoine Weihs <uni.antoine.weihs@@gmail.com>
+#' @author Antoine Weihs <antoine.weihs@@uni-greifswald.de>
 #' @param data_set (data.frame) data set created by \code{\link{load_files}}
 #' @param save_path (string) place where the outputs are saved
 #' @param stratum (string) stratum currently analysed
@@ -64,7 +64,7 @@ print_summaries <- function(data_set,save_path, stratum, phenotype, verbose=TRUE
 #'               \item{negative standard errors or p values}
 #'               \item{average number of decimal places of BETA, Pval and SE smaller then \code{decimal_places}}
 #'               }
-#' @author Antoine Weihs <uni.antoine.weihs@@gmail.com>
+#' @author Antoine Weihs <antoine.weihs@@uni-greifswald.de>
 #' @param data_set (data.frame) data set created by \code{\link{load_files}}
 #' @param num_NA (int) threshold for the number of NAs
 #' @param min_beta (int) lower threshold for BETA values

@@ -4,7 +4,7 @@
 \alias{save_files}
 \title{Save file functions}
 \usage{
-save_files(data, type, save_path, phenotype, gender, print_log, log_path,
+save_files(data, type, save_path, phenotype, stratum, print_log, log_path,
   verbose)
 }
 \arguments{
@@ -16,7 +16,7 @@ save_files(data, type, save_path, phenotype, gender, print_log, log_path,
 
 \item{phenotype}{(string) phenotype used in the analysis}
 
-\item{gender}{(string) gender used in the analysis}
+\item{stratum}{(string) stratum used in the analysis}
 
 \item{print_log}{(bool) TRUE: print to log file FALSE: won't}
 
@@ -28,5 +28,5 @@ save_files(data, type, save_path, phenotype, gender, print_log, log_path,
 functions that will save files as *.RData or *.csv
 }
 \author{
-Antoine Weihs <uni.antoine.weihs@gmail.com>
+Antoine Weihs <antoine.weihs@uni-greifswald.de>
 }

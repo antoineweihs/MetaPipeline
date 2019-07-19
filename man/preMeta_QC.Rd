@@ -6,7 +6,7 @@
 \usage{
 
   preMeta_QC(data_summary_path = "/home/weihsa/data/Thyroid_Cohorts/Cohort_Summary/summary.txt",
-  save_path = "./", phenotype, gender, cohort = NULL,
+  save_path = "./", phenotype, stratum, cohort = NULL,
   anno_file_path = "/home/weihsa/data/EWAS/Ilmn_Methylation_Masterfile-180309.txt.gz",
   pre_filter_step = FALSE, pre_filter_script, run_filter = TRUE,
   filter_percentage = 25, pre_plotting_step = FALSE,
@@ -24,7 +24,7 @@
 columns: \itemize{
 \item{\code{cohort}}{: Name of the cohort}
 \item{\code{phenotype}}{: Name of the observed phenotype used in the file}
-\item{\code{gender}}{ Name of the gender used in the file}
+\item{\code{stratum}}{ Name of the stratum used in the file}
 \item{\code{array_type}}{: type of array used by the cohort. Can be 450 or EPIC}
 \item{\code{probeID}}{: Name of the column containing the probeIDs}
 \item{\code{beta}}{: Name of the column containing the effect sizes}
@@ -40,7 +40,7 @@ columns: \itemize{
 
 \item{phenotype}{(string) phenotype that should be analysed (has to appear in the summary$Phenotype column)}
 
-\item{gender}{(string) gender that should be analysed (has to appear in the summary$Gender column)}
+\item{stratum}{(string) stratum that should be analysed (has to appear in the summary$stratum column)}
 
 \item{cohort}{(string) if only certain cohorts of the summary file should be analysed (has to appear in the summary$cohort column)}
 
@@ -108,5 +108,5 @@ This function combines multiple functions into one to perform an pre meta-analys
              -> pre_printing entry point -> printing summary -> printing flags -> final entry point
 }
 \author{
-Antoine Weihs <uni.antoine.weihs@gmail.com>
+Antoine Weihs <antoine.weihs@uni-greifswald.de>
 }

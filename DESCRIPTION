@@ -1,8 +1,8 @@
 Package: MetaPipeline
 Type: Package
 Title: Pipeline to run EWAS meta analysis
-Version: 1.0.11
-Authors@R: person("Antoine", "Weihs", email="uni.antoine.weihs@gmail.com", role = c("aut", "cre"))
+Version: 1.1.0
+Authors@R: person("Antoine", "Weihs", email="antoine.weihs@uni-greifswald.de", role = c("aut", "cre"))
 Description: Package containing quality control and meta-analysis functions to perform an EWAS meta-analysis.
 License: NOT FOR DISTRIBUTION
 Encoding: UTF-8
