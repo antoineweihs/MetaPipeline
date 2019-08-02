@@ -102,7 +102,7 @@ post_process <- function(result, combined_data, model, FDR, significance_level=0
 
     temp_data = data.frame(Markername = result$Markername, Estimate_phenotype = result$Estimate_phenotype, Pval_phenotype = result$Pval_phenotype)
     temp_data = merge(temp_data, Masterfile, by="Markername", all.x=TRUE, all.y=FALSE)
-    test = double_manhattan(temp_data, chr="CHR", bp="BP", p="Pval_phenotype", markername="Markername", beta="Estimate_phenotype", FDRcorr=FDR, cutoff=significance_level,
+    test = double_manhattan(temp_data, chr="CHR", bp="MAPINFO", p="Pval_phenotype", markername="Markername", beta="Estimate_phenotype", FDRcorr=FDR, cutoff=significance_level,
                             strict_cutoff=NULL, title=paste0(phenotype, " ", stratum, " Manhattan plot"), logP=T, marktop=T, save_plot=T, save_path=output_path)
     if(test == 1)
     {
