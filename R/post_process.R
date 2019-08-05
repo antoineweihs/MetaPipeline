@@ -1,12 +1,14 @@
 #' @title post process for FE or REML Random Effect meta analysis
 #' @author Antoine Weihs <antoine.weihs@@uni-greifswald.de>
-#' @description post processing function for \code{FE} and \code{REML} model which draws a forest plot for all site whose FDR adjusted p-value is above \code{significance_level}
+#' @description post processing function for \code{FE} and \code{REML} model which can draw
+#'              a forest plot for all site whose FDR-value or P-value is above \code{significance_level} and/or
+#'              draws a double manhattan plot and/or annotates the output with an annotation file
 #'
-#' @param result (data.frame) result from \code{\link{meta}} using FE and including FDR
+#' @param result (data.frame) result from \code{\link{meta}} using FE or REML
 #' @param combined_data (data.frame) data used to create the above result from \code{\link{load_files}}
 #' @param model (string) name of the model (can be either FE or REML)
-#' @param FDR (bool) TURE: FDR values are used instead of p-values (input needs to contain an FDR column) FALSE: p-values are used
-#' @param significance_level (double) FDR significance level for cut off
+#' @param FDR (bool) TRUE: FDR values are used instead of p-values (input needs to contain an FDR column) FALSE: p-values are used
+#' @param significance_level (double) FDR/p-value significance level for cut off
 #' @param plot_forest (bool) TRUE: Draws a forest plot of the top hits FALSE: won't
 #' @param plot_manhattan (bool) TRUE: will create a manhattan plot of the results FALSE: won't
 #' @param output_path (string) output path for the forest plot

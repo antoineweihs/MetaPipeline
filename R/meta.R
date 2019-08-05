@@ -6,7 +6,7 @@
 #' @param test_run_length FOR DEBUG (int) number of site to be run when \code{test_run} is TRUE
 #' @param num_cores (int) number of cores that should be used (only works in Linux systems)
 #' @param model (string) Estimator model for tau. Standard \code{FE}. Otherwise \code{BAYES} for a Bayesian approach, \code{REML} for a
-#'              restricted maximum likelihood approach (not recommended for small number of cohorts)
+#'              restricted maximum likelihood approach (not recommended for small number of cohorts) or \code{Z} for a p-value based approach
 #' @param cohort (vector string) order in which the cohorts should appear in the output. If null random order is used.
 #' @param cpg_filter (vector string) a vector containing the CpG sites that should be analysed
 #' @param FDR (bool) TRUE: p values will be corrected false discovery rate, FALSE: won't WARNING: If TRUE, only sites no errors will be returned
@@ -81,10 +81,10 @@ meta <- function(	input_data,
                   verbose=TRUE)
 {
   ## control step: check if model is correct
-  if (model != "REML" && model != "FE" && model != "BAYES")
+  if (model != "REML" && model != "FE" && model != "BAYES" && model != "Z")
   {
     stop(c("##########ERROR##########", "No known model chosen ",
-           "Models are: REML (Restricted maximum likelihood), FE (Fixed effect) or BAYES", paste0("You chose: ", model) ))
+           "Models are: REML (Restricted maximum likelihood), FE (Fixed effect), BAYES or Z (p-value based approach)", paste0("You chose: ", model) ))
   }
 
   ## control step: check if save_dest exists
@@ -93,7 +93,7 @@ meta <- function(	input_data,
   ## control step: check integrity of input_data
   "%nin%" = Negate("%in%")
   data_names = names(input_data)
-  column_names = c("probeID", "Cohort", "BETA", "SE", "P_VAL")
+  column_names = c("probeID", "Cohort", "BETA", "SE", "P_VAL", "Size")
   for (i in 1:length(column_names)) {if( column_names[i] %nin% data_names) {stop(paste0(column_names[i], " column missing in input_data"))}}
 
   ## terminal and log file output and start timer
@@ -200,7 +200,7 @@ meta <- function(	input_data,
   {
     #extract relevant data from combined data set
     data = dplyr::slice(input_data, start[i]:end[i])
-    sample_size = sum(data$size)
+    sample_size = sum(data$Size)
 
     #create cohort columns (shows beta direction of each cohort) + if the efect is positive, - if the effect is negative, 0 if the effect is zero and ? if the effect is missing
     included_cohorts = rep("?", length(cohort_list))
@@ -238,6 +238,40 @@ meta <- function(	input_data,
     return(output)
   }
 
+  # implementation as described in METAL: fast and efficient meta-analysis of genomewide association scans (doi:10.1093/bioinformatics/btq340)
+  doOneZ <- function(i)
+  {
+    #extract relevant data from combined data set
+    data = dplyr::slice(input_data, start[i]:end[i])
+    sample_size = sum(data$Size)
+
+    #create cohort columns (shows beta direction of each cohort) + if the efect is positive, - if the effect is negative, 0 if the effect is zero and ? if the effect is missing
+    included_cohorts = rep("?", length(cohort_list))
+    for(j in 1:length(data$probeID))
+    {
+      if(data$BETA[j] > 0 && !is.na(data$BETA[j])) {included_cohorts[which(cohort_list == data$Cohort[j])] = "+"}
+      else if (data$BETA[j] < 0 && !is.na(data$BETA[j])) {included_cohorts[which(cohort_list == data$Cohort[j])] = "-"}
+      else if (data$BETA[j] == 0 && !is.na(data$BETA[j])) {included_cohorts[which(cohort_list == data$Cohort[j])] = "0"}
+    }
+
+    #if the CpG site only appears in 1 cohort, NA is returned for that site
+    if(length(data$probeID) == 1)
+    {
+      output = c(data$probeID[1], model, NA, NA, length(data$probeID), included_cohorts, sample_size, TRUE, "only one CpG site present")
+    }
+
+    #if the CpG site appears in more then 1 cohort an meta analysis is done on that site
+    else
+    {
+      temp_zscores = qnorm(data$P_VAL/2) * sign(data$BETA)
+      temp_weights = sqrt(data$Size)
+      overall_zscore = sum(temp_zscores*temp_weights)/sum(temp_weights)
+      overall_pvalue = 2*pnorm(-abs(overall_zscore))
+      output = c(data$probeID[1], model, overall_pvalue, overall_zscore, length(data$probeID), included_cohorts, sample_size, FALSE, NA)
+    }
+
+    return(output)
+  }
 
   ## control step: check system (mclapply only works on Linux) if not, the package will set the number of cores to 1
   if(Sys.info()["sysname"] != "Linux")
@@ -283,6 +317,30 @@ meta <- function(	input_data,
       meta_result$FDR = p.adjust(as.numeric(meta_result$Pval_phenotype), "BH")
     }
   }
+
+  else if(model == "Z")
+  {
+    #if verbose is true the package will display a progress bar, if not not terminal output will be generated
+    if(verbose && num_cores > 1) {meta_result = do.call(rbind, pbmcapply::pbmclapply(1:length(start), doOneZ, mc.style="ETA"))}
+    else {meta_result = do.call(rbind, parallel::mclapply(1:length(start), doOneZ))}
+
+    #define column names of the output and reconfigure the output data.frame
+    colnames(meta_result) = c("Markername", "Model", "Estimated_PValue", "Estimated_ZScore", "number_of_cohorts", cohort_list, "sample_size",
+                              "analysis_error", "error_mesage")
+    meta_result = data.frame(meta_result, stringsAsFactors = FALSE)
+
+    if(FDR)
+    {
+      ## terminal and log file output
+      text = paste0("   Applying FDR (removing ", length(which(meta_result$analysis_error == TRUE)), " positions because of errors)")
+      if(verbose) {writeLines(text)}
+      if(print_log) {cat(c(text), file=log_path, append=TRUE, sep="\n")}
+
+      meta_result = meta_result[meta_result$analysis_error == FALSE,]
+      meta_result$FDR = p.adjust(as.numeric(meta_result$Estimated_PValue), "BH")
+    }
+  }
+
   else if(model == "BAYES")
   {
     #if verbose is true the package will display a progress bar, if not not terminal output will be generated

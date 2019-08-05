@@ -20,7 +20,7 @@ meta(input_data, test_run = FALSE, test_run_length = 1000,
 \item{num_cores}{(int) number of cores that should be used (only works in Linux systems)}
 
 \item{model}{(string) Estimator model for tau. Standard \code{FE}. Otherwise \code{BAYES} for a Bayesian approach, \code{REML} for a
-restricted maximum likelihood approach (not recommended for small number of cohorts)}
+restricted maximum likelihood approach (not recommended for small number of cohorts) or \code{Z} for a p-value based approach}
 
 \item{cohort}{(vector string) order in which the cohorts should appear in the output. If null random order is used.}
 

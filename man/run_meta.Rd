@@ -26,7 +26,7 @@ run_meta(phenotype, stratum, num_cores = 1, model = "FE",
 \item{num_cores}{(int) number of cores that should be used for the meta analysis (only works on Linux)}
 
 \item{model}{(string) Estimator model for tau. Standard \code{FE}. Otherwise \code{BAYES} for a Bayesian approach,
-\code{REML} for a restricted maximum likelihood approach (not recommended for small number of cohorts (<10))}
+\code{REML} for a restricted maximum likelihood approach (not recommended for small number of cohorts (<10)) or \code{Z} for p-value based approach}
 
 \item{data_summary_path}{(string) path to the file that contains all the info of the cohorts. Has to include the following tab separated
 columns: \itemize{

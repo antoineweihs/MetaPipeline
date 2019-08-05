@@ -9,7 +9,7 @@
 #' @param stratum (string) stratum that should be analysed (has to appear in the summary$stratum column)
 #' @param num_cores (int) number of cores that should be used for the meta analysis (only works on Linux)
 #' @param model (string) Estimator model for tau. Standard \code{FE}. Otherwise \code{BAYES} for a Bayesian approach,
-#'          		\code{REML} for a restricted maximum likelihood approach (not recommended for small number of cohorts (<10))
+#'          		\code{REML} for a restricted maximum likelihood approach (not recommended for small number of cohorts (<10)) or \code{Z} for p-value based approach
 #' @param data_summary_path (string) path to the file that contains all the info of the cohorts. Has to include the following tab separated
 #'                          columns: \itemize{
 #'                          \item{\code{cohort}}{: Name of the cohort}
@@ -183,7 +183,7 @@ run_meta <- function(	phenotype,
   }
 
   ## post process
-  ##run FE or REML post process (creates forest plots of significant sites)
+  ##run FE or REML post process (creates forest plots of significant sites and/or a double manhattan plot and/or annotates the output)
   if(run_post_process & (model=="FE" | model=="REML"))
   {
     ## terminal and log file output
@@ -208,6 +208,20 @@ run_meta <- function(	phenotype,
                                      cutoff=post_cutoff, replicates=post_replicates, plot_forest=plot_forest, output_path=output_path,
                                      phenotype=phenotype, stratum=stratum, print_log=print_log, log_path=log_path, verbose=verbose,
                                      num_cores=num_cores)
+
+    ## terminal and log file output
+    text = c(" ")
+    if(verbose) {writeLines(text)}
+    if(print_log) {cat(text, file=log_path, append=TRUE, sep="\n")}
+
+  }
+
+  ##run Z post process (creates a manhattan plot and/or annotates the output)
+  if(run_post_process & model=="Z")
+  {
+    meta_result = post_processZ(result=meta_result, FDR=FDR, significance_level=post_sigLevel,
+                                plot_manhattan=plot_manhattan, annotate_result=annotate_result, annotation_filepath=annotation_filepath, output_path=output_path,
+                                phenotype=phenotype, stratum=stratum, print_log=print_log,  log_path=log_path, verbose=verbose)
 
     ## terminal and log file output
     text = c(" ")
