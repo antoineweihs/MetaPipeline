@@ -104,7 +104,9 @@ load_files <- function(data_summary_path, phenotype, stratum, cohort=NULL, FDR=T
     if(print_log) {cat(text, file=log_path, append=TRUE, sep="\n")}
     ## control step: check if file exists
     if(!file.exists(data_set_path[i])) {stop(paste0(data_set_names[i] , " could not be found at ", data_set_path[i]))}
-    assign(data_set_names[i],  data.frame(data.table::fread(data_set_path[i], header= TRUE, sep= data_set_separator[i], verbose=FALSE)))
+    bufsep=data_set_separator[i] # handle tab separator
+    if (bufsep == "\\t" | tolower(bufsep)=="tab") { bufsep="\t" }
+    assign(data_set_names[i],  data.frame(data.table::fread(data_set_path[i], header= TRUE, sep=bufsep, verbose=FALSE)))
   }
 
   ##load an redefine the annotation file if required

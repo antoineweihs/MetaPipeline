@@ -295,7 +295,7 @@ se_vs_size_plot <- function(data_set,save_path, stratum, phenotype, verbose=TRUE
   median_size = rep(NA, length(cohort_names))
   for (i in 1:length(cohort_names))
   {
-    median_size[i] = stats::median(data_set[data_set$Cohort == cohort_names[i],]$Size, na.rm=TRUE)
+    median_size[i] = sqrt(stats::median(data_set[data_set$Cohort == cohort_names[i],]$Size, na.rm=TRUE)) # use sqrt(N)
     median_se[i] = stats::median(data_set[data_set$Cohort == cohort_names[i],]$SE, na.rm=TRUE)
   }
 
@@ -303,10 +303,10 @@ se_vs_size_plot <- function(data_set,save_path, stratum, phenotype, verbose=TRUE
   if(verbose) {writeLines(text)}
   if(print_log) {cat(text, file=log_path, append=TRUE, sep="\n")}
 
-  temp_data = data.frame(median_SE = median_se, median_Size= 1/median_size, label=cohort_names)
+  temp_data = data.frame(median_SE = 1/median_se, median_Size= median_size, label=cohort_names)
   plot = ggplot2::ggplot(temp_data, ggplot2::aes(x=median_SE, y=median_Size, label=label)) + ggplot2::geom_point()
-  plot = plot + ggplot2::ggtitle(paste0(phenotype, " ", stratum, " ", " se vs size")) + ggplot2::geom_text(hjust=0, nudge_x = 0.05)
-  plot = plot + ggplot2::labs(x="median standard error", y="1 / median size")
+  plot = plot + ggplot2::ggtitle(paste0(phenotype, " ", stratum, " ", " weight vs size")) + ggplot2::geom_text(hjust=0, vjust=0, check_overlap = TRUE)
+  plot = plot + ggplot2::labs(x="1/median standard error", y="sqrt(median size)")
 
   full_path = paste0(save_path,"se_vs_size_",phenotype,"_",stratum,".png")
   text = paste0("Saving plot to: ", full_path)
