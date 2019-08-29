@@ -8,6 +8,7 @@
 #' @param cutoff (double) effect posterior probability cut-off
 #' @param replicates (int) number of replications for the posterior probability check (n >> 100 recommended)
 #' @param plot_forest (bool) TRUE: Draws a forest plot of the top hits FALSE: won't
+#' @param return_hits_only (bool) TRUE: will only return sites above the significance level cut off. FALSE: will return the whole data set.
 #' @param output_path (string) output path for the forest plot
 #' @param annotate_result (bool) TRUE: will merge output file with annoation file FALSE: won't
 #' @param annotation_filepath (string) file path to annotation file (annotation file has to contain a 'Markername' column, has to be a tab separated file,
@@ -31,7 +32,7 @@
 #' @importFrom grDevices dev.off png
 #'
 #' @export
-bayes_post_process <- function(result, combined_data, run_posterior_Check = TRUE, cutoff=0.95, replicates=1000, plot_forest=TRUE, output_path="./",
+bayes_post_process <- function(result, combined_data, run_posterior_Check = TRUE, cutoff=0.95, replicates=1000, plot_forest=TRUE, return_hits_only=FALSE, output_path="./",
                                annotate_result=TRUE, annotation_filepath=NULL,
                                phenotype=NULL, stratum=NULL, print_log=FALSE, log_path="./", verbose=TRUE, num_cores=NULL)
 {
@@ -177,6 +178,11 @@ bayes_post_process <- function(result, combined_data, run_posterior_Check = TRUE
       annotation_file <- readr::read_delim(annotation_filepath, "\t", escape_double = FALSE, comment = "#", trim_ws = TRUE, col_types = readr::cols(), progress = FALSE)
       result = merge(result, annotation_file, by="Markername", all.x=T, all.y=F)
     }
+  }
+
+  if(return_hits_only)
+  {
+    result = result[significant_hits,]
   }
 
   return(result)

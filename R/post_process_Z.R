@@ -6,6 +6,7 @@
 #' @param FDR (bool) TURE: FDR values are used instead of p-values (input needs to contain an FDR column) FALSE: p-values are used
 #' @param significance_level (double) FDR/p-value significance level for cut off
 #' @param plot_manhattan (bool) TRUE: will create a manhattan plot of the results FALSE: won't
+#' @param return_hits_only (bool) TRUE: will only return sites above the significance level cut off. FALSE: will return the whole data set.
 #' @param output_path (string) output path for the forest plot
 #' @param annotate_result (bool) TRUE: will merge output file with annoation file FALSE: won't
 #' @param annotation_filepath (string) file path to annotation file (annotation file has to contain a 'Markername' column, has to be a tab separated file,
@@ -21,7 +22,7 @@
 #'
 #' @importFrom readr read_delim
 #' @export
-post_processZ <- function(result, FDR, significance_level=0.05, plot_manhattan=TRUE, output_path="./", annotate_result=TRUE,
+post_processZ <- function(result, FDR, significance_level=0.05, plot_manhattan=TRUE, return_hits_only=FALSE, output_path="./", annotate_result=TRUE,
                          annotation_filepath=NULL, phenotype=NULL, stratum=NULL, print_log=FALSE, log_path="./", verbose=TRUE)
 {
   model="Z"
@@ -99,6 +100,11 @@ post_processZ <- function(result, FDR, significance_level=0.05, plot_manhattan=T
       annotation_file <- readr::read_delim(annotation_filepath, "\t", escape_double = FALSE, comment = "#", trim_ws = TRUE, col_types = readr::cols(), progress = FALSE)
       result = merge(result, annotation_file, by="Markername", all.x=TRUE, all.y=FALSE)
     }
+  }
+
+  if(return_hits_only)
+  {
+    result = result[result$Markername %in% relevant_id,]
   }
 
   return(result)

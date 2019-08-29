@@ -7,8 +7,9 @@
 post_process(result, combined_data, model, FDR,
   significance_level = 0.05, plot_forest = TRUE,
   plot_manhattan = TRUE, output_path = "./", annotate_result = TRUE,
-  annotation_filepath = NULL, phenotype = NULL, stratum = NULL,
-  print_log = FALSE, log_path = "./", verbose = TRUE)
+  annotation_filepath = NULL, return_hits_only = FALSE,
+  phenotype = NULL, stratum = NULL, print_log = FALSE,
+  log_path = "./", verbose = TRUE)
 }
 \arguments{
 \item{result}{(data.frame) result from \code{\link{meta}} using FE or REML}
@@ -31,6 +32,8 @@ post_process(result, combined_data, model, FDR,
 
 \item{annotation_filepath}{(string) file path to annotation file (annotation file has to contain a 'Markername' column, has to be a tab separated file,
 comments have to be preceded by '#')}
+
+\item{return_hits_only}{(bool) TRUE: will only return sites above the significance level cut off. FALSE: will return the whole data set.}
 
 \item{phenotype}{(string) phenotype currently examined (for the forest plot name and label)}
 

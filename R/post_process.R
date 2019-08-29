@@ -15,6 +15,7 @@
 #' @param annotate_result (bool) TRUE: will merge output file with annoation file FALSE: won't
 #' @param annotation_filepath (string) file path to annotation file (annotation file has to contain a 'Markername' column, has to be a tab separated file,
 #'                            comments have to be preceded by '#')
+#' @param return_hits_only (bool) TRUE: will only return sites above the significance level cut off. FALSE: will return the whole data set.
 #' @param phenotype (string) phenotype currently examined (for the forest plot name and label)
 #' @param stratum (string) stratum currently examined (for the forest plot and label)
 #' @param print_log (bool) TRUE: print to log file FALSE: won't
@@ -28,7 +29,7 @@
 #' @importFrom readr read_delim
 #' @export
 post_process <- function(result, combined_data, model, FDR, significance_level=0.05, plot_forest=TRUE, plot_manhattan=TRUE, output_path="./", annotate_result=TRUE,
-                         annotation_filepath=NULL, phenotype=NULL, stratum=NULL, print_log=FALSE, log_path="./", verbose=TRUE)
+                         annotation_filepath=NULL, return_hits_only=FALSE, phenotype=NULL, stratum=NULL, print_log=FALSE, log_path="./", verbose=TRUE)
 {
   #terminal and log file output
   text = "Running post processing on results"
@@ -131,6 +132,11 @@ post_process <- function(result, combined_data, model, FDR, significance_level=0
       annotation_file <- readr::read_delim(annotation_filepath, "\t", escape_double = FALSE, comment = "#", trim_ws = TRUE, col_types = readr::cols(), progress = FALSE)
       result = merge(result, annotation_file, by="Markername", all.x=TRUE, all.y=FALSE)
     }
+  }
+
+  if(return_hits_only)
+  {
+    result = result[result$Markername %in% relevant_id,]
   }
 
   return(result)

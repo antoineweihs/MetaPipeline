@@ -6,10 +6,10 @@
 \usage{
 bayes_post_process(result, combined_data, run_posterior_Check = TRUE,
   cutoff = 0.95, replicates = 1000, plot_forest = TRUE,
-  output_path = "./", annotate_result = TRUE,
-  annotation_filepath = NULL, phenotype = NULL, stratum = NULL,
-  print_log = FALSE, log_path = "./", verbose = TRUE,
-  num_cores = NULL)
+  return_hits_only = FALSE, output_path = "./",
+  annotate_result = TRUE, annotation_filepath = NULL,
+  phenotype = NULL, stratum = NULL, print_log = FALSE,
+  log_path = "./", verbose = TRUE, num_cores = NULL)
 }
 \arguments{
 \item{result}{(data.frame) result from \code{\link{meta}} using the Bayesian model}
@@ -23,6 +23,8 @@ bayes_post_process(result, combined_data, run_posterior_Check = TRUE,
 \item{replicates}{(int) number of replications for the posterior probability check (n >> 100 recommended)}
 
 \item{plot_forest}{(bool) TRUE: Draws a forest plot of the top hits FALSE: won't}
+
+\item{return_hits_only}{(bool) TRUE: will only return sites above the significance level cut off. FALSE: will return the whole data set.}
 
 \item{output_path}{(string) output path for the forest plot}
 

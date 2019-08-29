@@ -5,7 +5,8 @@
 \title{post process for Z-based meta analysis}
 \usage{
 post_processZ(result, FDR, significance_level = 0.05,
-  plot_manhattan = TRUE, output_path = "./", annotate_result = TRUE,
+  plot_manhattan = TRUE, return_hits_only = FALSE,
+  output_path = "./", annotate_result = TRUE,
   annotation_filepath = NULL, phenotype = NULL, stratum = NULL,
   print_log = FALSE, log_path = "./", verbose = TRUE)
 }
@@ -17,6 +18,8 @@ post_processZ(result, FDR, significance_level = 0.05,
 \item{significance_level}{(double) FDR/p-value significance level for cut off}
 
 \item{plot_manhattan}{(bool) TRUE: will create a manhattan plot of the results FALSE: won't}
+
+\item{return_hits_only}{(bool) TRUE: will only return sites above the significance level cut off. FALSE: will return the whole data set.}
 
 \item{output_path}{(string) output path for the forest plot}
 

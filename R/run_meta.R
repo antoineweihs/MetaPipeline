@@ -52,6 +52,8 @@
 #' @param annotate_result (bool) POSTPROCESS: TRUE: will merge output file with annoation file FALSE: won't
 #' @param annotation_filepath (string) POSTPROCESS: file path to annotation file (annotation file has to contain a 'Markername' column, has to be a tab separated file,
 #'                            comments have to be preceded by '#')
+#' @param return_hits_only (bool) POSTPROCESS: TRUE: If \code{run_post_process} is TRUE will only return sites above the significance level cut off. FALSE: will return
+#'                         the whole data set.
 #' @param final_step (bool) TRUE: runs script located at \code{final_path} FALSE: won't
 #' @param final_path (string) path to script. \code{final_step} has to be TRUE to run
 #' @param print_log (bool) TRUE: log will be printed to output_path FALSE: no log will be printed
@@ -77,7 +79,7 @@ run_meta <- function(	phenotype,
                       pre_meta_step=FALSE, pre_meta_path,
                       post_meta_step=FALSE, post_meta_path,
                       run_post_process=FALSE, run_posterior_Check = TRUE, post_sigLevel = 0.05, post_cutoff=0.95, post_replicates=1000,
-                      plot_forest=FALSE, plot_manhattan=TRUE, annotate_result = FALSE, annotation_filepath=NULL,
+                      plot_forest=FALSE, plot_manhattan=TRUE, annotate_result = FALSE, annotation_filepath=NULL, return_hits_only = FALSE,
                       final_step=FALSE, final_path,
                       print_log=TRUE,
                       save_RData=FALSE,
@@ -104,7 +106,8 @@ run_meta <- function(	phenotype,
            if(run_post_process) {paste0("   annotate_result: ", annotate_result)},
            if(run_post_process) {paste0("   annotation_filepath: ", annotation_filepath)}, if(run_post_process) {paste0("   run_posterior_Check: ", run_posterior_Check)},
            if(run_post_process) {paste0("   post_sigLevel: ", post_sigLevel)}, if(run_post_process) {paste0("   post_cutoff: ", post_cutoff)},
-           if(run_post_process) {paste0("   post_replicates: ", post_replicates)}, paste0("   final_step: ", final_step),
+           if(run_post_process) {paste0("   post_replicates: ", post_replicates)}, if(run_post_process) {paste0("   return_hits_only: ", return_hits_only)},
+           paste0("   final_step: ", final_step),
            if(final_step) {paste0("   final_path: ", final_path)}, paste0("   print_log: ", print_log), paste0("   save_RData: ", save_RData),
            paste0("   save_csvData: ", save_csvData), paste0("   output_path: ", output_path),"")
 
@@ -192,8 +195,8 @@ run_meta <- function(	phenotype,
     if(print_log) {cat(text, file=log_path, append=TRUE, sep="\n")}
 
     meta_result = post_process(result=meta_result, combined_data=combined_data, model=model, FDR=FDR, significance_level=post_sigLevel, plot_forest=plot_forest,
-                               plot_manhattan=plot_manhattan, annotate_result=annotate_result, annotation_filepath=annotation_filepath, output_path=output_path,
-                               phenotype=phenotype, stratum=stratum, print_log=print_log,  log_path=log_path, verbose=verbose)
+                               plot_manhattan=plot_manhattan, annotate_result=annotate_result, annotation_filepath=annotation_filepath, return_hits_only=return_hits_only,
+                               output_path=output_path, phenotype=phenotype, stratum=stratum, print_log=print_log,  log_path=log_path, verbose=verbose)
 
     ## terminal and log file output
     text = c(" ")
@@ -205,7 +208,8 @@ run_meta <- function(	phenotype,
   if(run_post_process & model=="BAYES")
   {
     meta_result = bayes_post_process(result=meta_result, combined_data=combined_data, run_posterior_Check=run_posterior_Check,
-                                     cutoff=post_cutoff, replicates=post_replicates, plot_forest=plot_forest, output_path=output_path,
+                                     cutoff=post_cutoff, replicates=post_replicates, plot_forest=plot_forest, return_hits_only=return_hits_only,
+                                     output_path=output_path, annotate_result=annotate_result, annotation_filepath=annotation_filepath,
                                      phenotype=phenotype, stratum=stratum, print_log=print_log, log_path=log_path, verbose=verbose,
                                      num_cores=num_cores)
 
@@ -220,8 +224,8 @@ run_meta <- function(	phenotype,
   if(run_post_process & model=="Z")
   {
     meta_result = post_processZ(result=meta_result, FDR=FDR, significance_level=post_sigLevel,
-                                plot_manhattan=plot_manhattan, annotate_result=annotate_result, annotation_filepath=annotation_filepath, output_path=output_path,
-                                phenotype=phenotype, stratum=stratum, print_log=print_log,  log_path=log_path, verbose=verbose)
+                                plot_manhattan=plot_manhattan, annotate_result=annotate_result, annotation_filepath=annotation_filepath, return_hits_only=return_hits_only,
+                                output_path=output_path, phenotype=phenotype, stratum=stratum, print_log=print_log,  log_path=log_path, verbose=verbose)
 
     ## terminal and log file output
     text = c(" ")

@@ -14,9 +14,9 @@ run_meta(phenotype, stratum, num_cores = 1, model = "FE",
   post_sigLevel = 0.05, post_cutoff = 0.95, post_replicates = 1000,
   plot_forest = FALSE, plot_manhattan = TRUE,
   annotate_result = FALSE, annotation_filepath = NULL,
-  final_step = FALSE, final_path, print_log = TRUE,
-  save_RData = FALSE, save_csvData = FALSE, output_path = "./",
-  verbose = TRUE)
+  return_hits_only = FALSE, final_step = FALSE, final_path,
+  print_log = TRUE, save_RData = FALSE, save_csvData = FALSE,
+  output_path = "./", verbose = TRUE)
 }
 \arguments{
 \item{phenotype}{(string) phenotype that should be analysed (has to appear in the summary$Phenotype column)}
@@ -93,6 +93,9 @@ posterior probability check (n >> 100 recommended)}
 
 \item{annotation_filepath}{(string) POSTPROCESS: file path to annotation file (annotation file has to contain a 'Markername' column, has to be a tab separated file,
 comments have to be preceded by '#')}
+
+\item{return_hits_only}{(bool) POSTPROCESS: TRUE: If \code{run_post_process} is TRUE will only return sites above the significance level cut off. FALSE: will return
+the whole data set.}
 
 \item{final_step}{(bool) TRUE: runs script located at \code{final_path} FALSE: won't}
 
