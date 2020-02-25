@@ -4,11 +4,22 @@
 \alias{meta}
 \title{Meta-analysis function}
 \usage{
-meta(input_data, test_run = FALSE, test_run_length = 1000,
-  num_cores = 1, model = "FE", cohort = NULL, cpg_filter = NULL,
-  FDR = TRUE, print_log = FALSE, log_path = "log.txt",
-  save_result = FALSE, save_dest = "./", save_name = NULL,
-  verbose = TRUE)
+meta(
+  input_data,
+  test_run = FALSE,
+  test_run_length = 1000,
+  num_cores = 1,
+  model = "FE",
+  cohort = NULL,
+  cpg_filter = NULL,
+  FDR = TRUE,
+  print_log = FALSE,
+  log_path = "log.txt",
+  save_result = FALSE,
+  save_dest = "./",
+  save_name = NULL,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{input_data}{(data.frame) data set created by \code{\link{load_files}}}

@@ -6,11 +6,10 @@
 #' @param FDR (bool) TURE: FDR values are used instead of p-values (input needs to contain an FDR column) FALSE: p-values are used
 #' @param significance_level (double) FDR/p-value significance level for cut off
 #' @param plot_manhattan (bool) TRUE: will create a manhattan plot of the results FALSE: won't
+#' @param plot_annotation (bool) TRUE: creates annotaton plots of top hits FALSE: won't
 #' @param return_hits_only (bool) TRUE: will only return sites above the significance level cut off. FALSE: will return the whole data set.
 #' @param output_path (string) output path for the forest plot
 #' @param annotate_result (bool) TRUE: will merge output file with annoation file FALSE: won't
-#' @param annotation_filepath (string) file path to annotation file (annotation file has to contain a 'Markername' column, has to be a tab separated file,
-#'                            comments have to be preceded by '#')
 #' @param phenotype (string) phenotype currently examined (for the forest plot name and label)
 #' @param stratum (string) stratum currently examined (for the forest plot and label)
 #' @param print_log (bool) TRUE: print to log file FALSE: won't
@@ -22,8 +21,9 @@
 #'
 #' @importFrom readr read_delim
 #' @export
-post_processZ <- function(result, FDR, significance_level=0.05, plot_manhattan=TRUE, return_hits_only=FALSE, output_path="./", annotate_result=TRUE,
-                         annotation_filepath=NULL, phenotype=NULL, stratum=NULL, print_log=FALSE, log_path="./", verbose=TRUE)
+post_processZ <- function(result, FDR, significance_level=0.05, plot_manhattan=TRUE, plot_annotation=TRUE, return_hits_only=FALSE,
+                          output_path="./", annotate_result=TRUE,
+                          phenotype=NULL, stratum=NULL, print_log=FALSE, log_path="./", verbose=TRUE)
 {
   model="Z"
   #terminal and log file output
@@ -39,7 +39,7 @@ post_processZ <- function(result, FDR, significance_level=0.05, plot_manhattan=T
     text = "Post Process error: FDR = TRUE but no FDR column in data set. Using p-values."
     if(verbose) {writeLines(text)}
     if(print_log) {cat(text, file=log_path, append=TRUE, sep="\n")}
-    relevant_id = result$Markername[which(as.numeric(as.character(result$Estimated_PValue)) < significance_level & result$analysis_error == FALSE)]
+    FDR=FALSE
   }
   if(FDR == FALSE) {relevant_id = result$Markername[which(as.numeric(as.character(result$Estimated_PValue)) < significance_level & result$analysis_error == FALSE)]}
 
@@ -83,23 +83,33 @@ post_processZ <- function(result, FDR, significance_level=0.05, plot_manhattan=T
     }
   }
 
+  if(plot_annotation & FDR == TRUE)
+  {
+    temp = result
+    temp = temp[!is.na(temp$Estimated_PValue),]
+    temp$Pval_phenotype = stats::p.adjust(d$Estimated_PValue, "BH")
+    for(i in relevant_id)
+    {
+      annotation_plot(result=temp, id=i, phenotype=phenotype, verbose=verbose, print_log=print_log, log_path=log_path, save_dest=output_path)
+    }
+  }
+
+  if(plot_annotation & FDR == FALSE)
+  {
+    temp = result
+    temp$Pval_phenotype = temp$Estimated_PValue
+    for(i in relevant_id)
+    {
+      annotation_plot(result=result, id=i, phenotype=phenotype, verbose=verbose, print_log=print_log, log_path=log_path, save_dest=output_path)
+    }
+  }
+
   if(annotate_result)
   {
     text = "Annotating results"
     if(verbose) {writeLines(text)}
     if(print_log) {cat(text, file=log_path, append=TRUE, sep="\n")}
-
-    if(is.null(annotation_filepath))
-    {
-      text = "Post Process error: No annotation file given, skipping annotation step"
-      if(verbose) {writeLines(text)}
-      if(print_log) {cat(text, file=log_path, append=TRUE, sep="\n")}
-    }
-    else
-    {
-      annotation_file <- readr::read_delim(annotation_filepath, "\t", escape_double = FALSE, comment = "#", trim_ws = TRUE, col_types = readr::cols(), progress = FALSE)
-      result = merge(result, annotation_file, by="Markername", all.x=TRUE, all.y=FALSE)
-    }
+    result = merge(result, Masterfile, by="Markername", all.x=TRUE, all.y=FALSE)
   }
 
   if(return_hits_only)

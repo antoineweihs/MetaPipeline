@@ -4,10 +4,22 @@
 \alias{print_flags}
 \title{Print flags}
 \usage{
-print_flags(data_set, num_NA = 1000, min_beta = -2, max_beta = 2,
-  max_se = 4, min_inflation = 0.8, max_inflation = 1.2,
-  decimal_places = 4, save_path, stratum, phenotype, verbose = TRUE,
-  print_log = FALSE, log_path = "./log.txt")
+print_flags(
+  data_set,
+  num_NA = 1000,
+  min_beta = -2,
+  max_beta = 2,
+  max_se = 4,
+  min_inflation = 0.8,
+  max_inflation = 1.2,
+  decimal_places = 4,
+  save_path,
+  stratum,
+  phenotype,
+  verbose = TRUE,
+  print_log = FALSE,
+  log_path = "./log.txt"
+)
 }
 \arguments{
 \item{data_set}{(data.frame) data set created by \code{\link{load_files}}}

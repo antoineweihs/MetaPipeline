@@ -4,20 +4,39 @@
 \alias{preMeta_QC}
 \title{Pre meta-analysis QC pipeline}
 \usage{
-
-  preMeta_QC(data_summary_path = "/home/weihsa/data/Thyroid_Cohorts/Cohort_Summary/summary.txt",
-  save_path = "./", phenotype, stratum, cohort = NULL,
-  anno_file_path = "/home/weihsa/data/EWAS/Ilmn_Methylation_Masterfile-180309.txt.gz",
-  pre_filter_step = FALSE, pre_filter_script, run_filter = TRUE,
-  filter_percentage = 25, pre_plotting_step = FALSE,
-  pre_plotting_script, plotting = TRUE, plotting_chr = TRUE,
-  same_scale = TRUE, plot_trim = FALSE, pre_printing_step = FALSE,
-  pre_printing_script, print_summary = TRUE, print_flags = TRUE,
-  flags_num_NA = 1000, flags_min_beta = -2, flags_max_beta = 2,
-  flags_max_se = 4, flags_min_inflation = 0.9,
-  flags_max_inflation = 1.1, flags_decimal_places = 4,
-  final_step = FALSE, final_script, print_log = FALSE,
-  log_path = "./log.txt", verbose = TRUE)
+preMeta_QC(
+  data_summary_path = "/home/weihsa/data/Thyroid_Cohorts/Cohort_Summary/summary.txt",
+  save_path = "./",
+  phenotype,
+  stratum,
+  cohort = NULL,
+  pre_filter_step = FALSE,
+  pre_filter_script,
+  run_filter = TRUE,
+  filter_percentage = 25,
+  pre_plotting_step = FALSE,
+  pre_plotting_script,
+  plotting = TRUE,
+  plotting_chr = TRUE,
+  same_scale = TRUE,
+  plot_trim = FALSE,
+  pre_printing_step = FALSE,
+  pre_printing_script,
+  print_summary = TRUE,
+  print_flags = TRUE,
+  flags_num_NA = 1000,
+  flags_min_beta = -2,
+  flags_max_beta = 2,
+  flags_max_se = 4,
+  flags_min_inflation = 0.9,
+  flags_max_inflation = 1.1,
+  flags_decimal_places = 4,
+  final_step = FALSE,
+  final_script,
+  print_log = FALSE,
+  log_path = "./log.txt",
+  verbose = TRUE
+)
 }
 \arguments{
 \item{data_summary_path}{(string) path to the file that contains all the info of the cohorts. Has to include the following tab separated
@@ -43,8 +62,6 @@ columns: \itemize{
 \item{stratum}{(string) stratum that should be analysed (has to appear in the summary$stratum column)}
 
 \item{cohort}{(string) if only certain cohorts of the summary file should be analysed (has to appear in the summary$cohort column)}
-
-\item{anno_file_path}{(string) path to the annotation file}
 
 \item{pre_filter_step}{(bool) TRUE: runs script located at \code{pre_filter_script} FALSE: won't}
 

@@ -4,12 +4,24 @@
 \alias{post_process}
 \title{post process for FE or REML Random Effect meta analysis}
 \usage{
-post_process(result, combined_data, model, FDR,
-  significance_level = 0.05, plot_forest = TRUE,
-  plot_manhattan = TRUE, output_path = "./", annotate_result = TRUE,
-  annotation_filepath = NULL, return_hits_only = FALSE,
-  phenotype = NULL, stratum = NULL, print_log = FALSE,
-  log_path = "./", verbose = TRUE)
+post_process(
+  result,
+  combined_data,
+  model,
+  FDR,
+  significance_level = 0.05,
+  plot_forest = TRUE,
+  plot_manhattan = TRUE,
+  plot_annotation = TRUE,
+  output_path = "./",
+  annotate_result = TRUE,
+  return_hits_only = FALSE,
+  phenotype = NULL,
+  stratum = NULL,
+  print_log = FALSE,
+  log_path = "./",
+  verbose = TRUE
+)
 }
 \arguments{
 \item{result}{(data.frame) result from \code{\link{meta}} using FE or REML}
@@ -26,12 +38,11 @@ post_process(result, combined_data, model, FDR,
 
 \item{plot_manhattan}{(bool) TRUE: will create a manhattan plot of the results FALSE: won't}
 
-\item{output_path}{(string) output path for the forest plot}
+\item{plot_annotation}{(bool) TRUE: will create an annotation plot of the top hits FALSE: won't}
+
+\item{output_path}{(string) output path for the plots}
 
 \item{annotate_result}{(bool) TRUE: will merge output file with annoation file FALSE: won't}
-
-\item{annotation_filepath}{(string) file path to annotation file (annotation file has to contain a 'Markername' column, has to be a tab separated file,
-comments have to be preceded by '#')}
 
 \item{return_hits_only}{(bool) TRUE: will only return sites above the significance level cut off. FALSE: will return the whole data set.}
 

@@ -4,19 +4,44 @@
 \alias{run_meta}
 \title{Meta-analysis pipeline}
 \usage{
-run_meta(phenotype, stratum, num_cores = 1, model = "FE",
+run_meta(
+  phenotype,
+  stratum,
+  num_cores = 1,
+  model = "FE",
   data_summary_path = "/home/weihsa/data/Thyroid_Cohorts/Cohort_Summary/summary.txt",
-  cohort = NULL, cpg_filter = NULL, pre_bacon_step = FALSE,
-  pre_bacon_path, apply_bacon = TRUE, pre_filter_step = FALSE,
-  pre_filter_path, filter = TRUE, filter_percentage = 25, FDR = TRUE,
-  pre_meta_step = FALSE, pre_meta_path, post_meta_step = FALSE,
-  post_meta_path, run_post_process = FALSE, run_posterior_Check = TRUE,
-  post_sigLevel = 0.05, post_cutoff = 0.95, post_replicates = 1000,
-  plot_forest = FALSE, plot_manhattan = TRUE,
-  annotate_result = FALSE, annotation_filepath = NULL,
-  return_hits_only = FALSE, final_step = FALSE, final_path,
-  print_log = TRUE, save_RData = FALSE, save_csvData = FALSE,
-  output_path = "./", verbose = TRUE)
+  cohort = NULL,
+  cpg_filter = NULL,
+  pre_bacon_step = FALSE,
+  pre_bacon_path,
+  apply_bacon = TRUE,
+  pre_filter_step = FALSE,
+  pre_filter_path,
+  filter = TRUE,
+  filter_percentage = 25,
+  FDR = TRUE,
+  pre_meta_step = FALSE,
+  pre_meta_path,
+  post_meta_step = FALSE,
+  post_meta_path,
+  run_post_process = FALSE,
+  run_posterior_Check = TRUE,
+  post_sigLevel = 0.05,
+  post_cutoff = 0.95,
+  post_replicates = 1000,
+  plot_forest = FALSE,
+  plot_manhattan = TRUE,
+  plot_annotation = TRUE,
+  annotate_result = FALSE,
+  return_hits_only = FALSE,
+  final_step = FALSE,
+  final_path,
+  print_log = TRUE,
+  save_RData = FALSE,
+  save_csvData = FALSE,
+  output_path = "./",
+  verbose = TRUE
+)
 }
 \arguments{
 \item{phenotype}{(string) phenotype that should be analysed (has to appear in the summary$Phenotype column)}
@@ -89,10 +114,9 @@ posterior probability check (n >> 100 recommended)}
 
 \item{plot_manhattan}{(bool) POSTPROCESS: TRUE: will create a manhattan plot of the results if model is FE or REML FALSE: won't}
 
-\item{annotate_result}{(bool) POSTPROCESS: TRUE: will merge output file with annoation file FALSE: won't}
+\item{plot_annotation}{(bool) POSTPROCESS: TRUE: will create an annotation plot of the top hits FALSE: won't}
 
-\item{annotation_filepath}{(string) POSTPROCESS: file path to annotation file (annotation file has to contain a 'Markername' column, has to be a tab separated file,
-comments have to be preceded by '#')}
+\item{annotate_result}{(bool) POSTPROCESS: TRUE: will merge output file with annoation file FALSE: won't}
 
 \item{return_hits_only}{(bool) POSTPROCESS: TRUE: If \code{run_post_process} is TRUE will only return sites above the significance level cut off. FALSE: will return
 the whole data set.}

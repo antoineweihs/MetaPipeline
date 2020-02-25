@@ -4,8 +4,15 @@
 \alias{chromosome_plot}
 \title{Chromosome plots}
 \usage{
-chromosome_plot(data_set, save_path, stratum, phenotype, verbose = TRUE,
-  print_log = FALSE, log_path = "./log.txt")
+chromosome_plot(
+  data_set,
+  save_path,
+  stratum,
+  phenotype,
+  verbose = TRUE,
+  print_log = FALSE,
+  log_path = "./log.txt"
+)
 }
 \arguments{
 \item{data_set}{(data.frame) data set created by \code{\link{load_files}}}

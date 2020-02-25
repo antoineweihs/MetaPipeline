@@ -4,9 +4,17 @@
 \alias{pval_plot}
 \title{Pvalue plots}
 \usage{
-pval_plot(data_set, same_scale = TRUE, save_path, stratum, phenotype,
-  trim = FALSE, verbose = TRUE, print_log = FALSE,
-  log_path = "./log.txt")
+pval_plot(
+  data_set,
+  same_scale = TRUE,
+  save_path,
+  stratum,
+  phenotype,
+  trim = FALSE,
+  verbose = TRUE,
+  print_log = FALSE,
+  log_path = "./log.txt"
+)
 }
 \arguments{
 \item{data_set}{(data.frame) data set created by \code{\link{load_files}}}

@@ -4,11 +4,21 @@
 \alias{post_processZ}
 \title{post process for Z-based meta analysis}
 \usage{
-post_processZ(result, FDR, significance_level = 0.05,
-  plot_manhattan = TRUE, return_hits_only = FALSE,
-  output_path = "./", annotate_result = TRUE,
-  annotation_filepath = NULL, phenotype = NULL, stratum = NULL,
-  print_log = FALSE, log_path = "./", verbose = TRUE)
+post_processZ(
+  result,
+  FDR,
+  significance_level = 0.05,
+  plot_manhattan = TRUE,
+  plot_annotation = TRUE,
+  return_hits_only = FALSE,
+  output_path = "./",
+  annotate_result = TRUE,
+  phenotype = NULL,
+  stratum = NULL,
+  print_log = FALSE,
+  log_path = "./",
+  verbose = TRUE
+)
 }
 \arguments{
 \item{result}{(data.frame) result from \code{\link{meta}} using Z}
@@ -19,14 +29,13 @@ post_processZ(result, FDR, significance_level = 0.05,
 
 \item{plot_manhattan}{(bool) TRUE: will create a manhattan plot of the results FALSE: won't}
 
+\item{plot_annotation}{(bool) TRUE: creates annotaton plots of top hits FALSE: won't}
+
 \item{return_hits_only}{(bool) TRUE: will only return sites above the significance level cut off. FALSE: will return the whole data set.}
 
 \item{output_path}{(string) output path for the forest plot}
 
 \item{annotate_result}{(bool) TRUE: will merge output file with annoation file FALSE: won't}
-
-\item{annotation_filepath}{(string) file path to annotation file (annotation file has to contain a 'Markername' column, has to be a tab separated file,
-comments have to be preceded by '#')}
 
 \item{phenotype}{(string) phenotype currently examined (for the forest plot name and label)}
 

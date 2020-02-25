@@ -4,8 +4,15 @@
 \alias{se_vs_size_plot}
 \title{SE vs Size plots}
 \usage{
-se_vs_size_plot(data_set, save_path, stratum, phenotype, verbose = TRUE,
-  print_log = FALSE, log_path = "./log.txt")
+se_vs_size_plot(
+  data_set,
+  save_path,
+  stratum,
+  phenotype,
+  verbose = TRUE,
+  print_log = FALSE,
+  log_path = "./log.txt"
+)
 }
 \arguments{
 \item{data_set}{(data.frame) data set created by \code{\link{load_files}}}

@@ -21,9 +21,6 @@
 #' @param cohort (string) if only certain cohorts of the summary file should be analysed (has to appear in the summary$cohort column)
 #' @param FDR (bool) TRUE: Add a column to the output with Bonferroni corrected p-values FALSE: won't
 #' @param annotation (bool) TRUE: Adds chromosome and MAPINFO column to output FALSE: won't
-#' @param anno_file_path (string) path to annotation file (required if annotation is TRUE). NOTE:
-#'                       - Has to include the following tab separated columns:
-#'                         IlmnID (contains the CpG site IDs), CHR (contains the chromosome number), MAPINFO (contains the MAPINFO)
 #' @param verbose (bool) TRUE: will print output to terminal FALSE: won't
 #' @param print_log (bool) TRUE: prints logs to log_path FALSE: won't
 #' @param log_path (string) full path + file name of log
@@ -37,7 +34,7 @@
 
 #' @export
 load_files <- function(data_summary_path, phenotype, stratum, cohort=NULL, FDR=TRUE, annotation = FALSE,
-                       anno_file_path= "./", verbose=TRUE, print_log=TRUE, log_path="./log.txt")
+                       verbose=TRUE, print_log=TRUE, log_path="./log.txt")
 {
   ##output
   if(verbose) {writeLines("Loading data")}
@@ -109,17 +106,6 @@ load_files <- function(data_summary_path, phenotype, stratum, cohort=NULL, FDR=T
     assign(data_set_names[i],  data.frame(data.table::fread(data_set_path[i], header= TRUE, sep=bufsep, verbose=FALSE)))
   }
 
-  ##load an redefine the annotation file if required
-  if(annotation)
-  {
-    anno_file = data.frame(data.table::fread(anno_file_path, sep="\t", verbose=FALSE))
-    anno_file = data.frame(probeID=anno_file$IlmnID, CHR=anno_file$CHR, POS=anno_file$MAPINFO)
-    anno_file$CHR = as.character(anno_file$CHR)
-    anno_file$CHR[anno_file$CHR == "X"] = 23
-    anno_file$CHR[anno_file$CHR == "Y"] = 24
-  }
-
-
   ## rename and remove useless data
   if(verbose) {writeLines("   renaming and merging")}
   for(i in 1:num_cohorts)
@@ -139,7 +125,7 @@ load_files <- function(data_summary_path, phenotype, stratum, cohort=NULL, FDR=T
 
   if(annotation)
   {
-    combined_data = merge(combined_data, anno_file, by="probeID")
+    combined_data = merge(combined_data, Masterfile, by="probeID")
   }
 
   combined_data$BETA = as.numeric(as.character(combined_data$BETA))

@@ -4,8 +4,14 @@
 \alias{run_filter}
 \title{Filter data}
 \usage{
-run_filter(data_set, percentage = 25, run = TRUE, print_log = FALSE,
-  log_path = "./log.txt", verbose = TRUE)
+run_filter(
+  data_set,
+  percentage = 25,
+  run = TRUE,
+  print_log = FALSE,
+  log_path = "./log.txt",
+  verbose = TRUE
+)
 }
 \arguments{
 \item{data_set}{(data.frame) data set created by \code{\link{load_files}}}

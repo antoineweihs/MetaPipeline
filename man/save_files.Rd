@@ -4,8 +4,16 @@
 \alias{save_files}
 \title{Save file functions}
 \usage{
-save_files(data, type, save_path, phenotype, stratum, print_log, log_path,
-  verbose)
+save_files(
+  data,
+  type,
+  save_path,
+  phenotype,
+  stratum,
+  print_log,
+  log_path,
+  verbose
+)
 }
 \arguments{
 \item{data}{(any) data set to be saved}

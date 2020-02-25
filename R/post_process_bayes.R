@@ -11,8 +11,6 @@
 #' @param return_hits_only (bool) TRUE: will only return sites above the significance level cut off. FALSE: will return the whole data set.
 #' @param output_path (string) output path for the forest plot
 #' @param annotate_result (bool) TRUE: will merge output file with annoation file FALSE: won't
-#' @param annotation_filepath (string) file path to annotation file (annotation file has to contain a 'Markername' column, has to be a tab separated file,
-#'                            comments have to be preceded by '#')
 #' @param phenotype (string) phenotype used in the analysis
 #' @param stratum (string) stratum used in the analysis
 #' @param print_log (bool) TRUE: print to log file FALSE: won't
@@ -33,7 +31,7 @@
 #'
 #' @export
 bayes_post_process <- function(result, combined_data, run_posterior_Check = TRUE, cutoff=0.95, replicates=1000, plot_forest=TRUE, return_hits_only=FALSE, output_path="./",
-                               annotate_result=TRUE, annotation_filepath=NULL,
+                               annotate_result=TRUE,
                                phenotype=NULL, stratum=NULL, print_log=FALSE, log_path="./", verbose=TRUE, num_cores=NULL)
 {
   #terminal and log file output
@@ -166,18 +164,7 @@ bayes_post_process <- function(result, combined_data, run_posterior_Check = TRUE
     text = "Annotating results"
     if(verbose) {writeLines(text)}
     if(print_log) {cat(text, file=log_path, append=TRUE, sep="\n")}
-
-    if(is.null(annotation_filepath))
-    {
-      text = "No annotation file given, skipping annotation step"
-      if(verbose) {writeLines(text)}
-      if(print_log) {cat(text, file=log_path, append=TRUE, sep="\n")}
-    }
-    else
-    {
-      annotation_file <- readr::read_delim(annotation_filepath, "\t", escape_double = FALSE, comment = "#", trim_ws = TRUE, col_types = readr::cols(), progress = FALSE)
-      result = merge(result, annotation_file, by="Markername", all.x=T, all.y=F)
-    }
+    result = merge(result, Masterfile, by="Markername", all.x=TRUE, all.y=FALSE)
   }
 
   if(return_hits_only)

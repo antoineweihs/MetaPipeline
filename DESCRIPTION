@@ -1,13 +1,13 @@
 Package: MetaPipeline
 Type: Package
 Title: Pipeline to run EWAS meta analysis
-Version: 1.1.12
+Version: 1.1.13
 Authors@R: person("Antoine", "Weihs", email="antoine.weihs@uni-greifswald.de", role = c("aut", "cre"))
 Description: Package containing quality control and meta-analysis functions to perform an EWAS meta-analysis.
 License: NOT FOR DISTRIBUTION
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 6.1.1
+RoxygenNote: 7.0.2
 Imports: R.utils, bacon, bayesmeta, data.table, dplyr, ggplot2, grDevices, gridExtra, metafor, parallel, pbmcapply, stats, tictoc, utils
 Suggests: 
     knitr,

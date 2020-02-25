@@ -4,9 +4,17 @@
 \alias{load_files}
 \title{Load files for this package}
 \usage{
-load_files(data_summary_path, phenotype, stratum, cohort = NULL,
-  FDR = TRUE, annotation = FALSE, anno_file_path = "./",
-  verbose = TRUE, print_log = TRUE, log_path = "./log.txt")
+load_files(
+  data_summary_path,
+  phenotype,
+  stratum,
+  cohort = NULL,
+  FDR = TRUE,
+  annotation = FALSE,
+  verbose = TRUE,
+  print_log = TRUE,
+  log_path = "./log.txt"
+)
 }
 \arguments{
 \item{data_summary_path}{(string) path to the file that contains all the info of the cohorts. Has to include the following tab separated
@@ -34,10 +42,6 @@ columns: \itemize{
 \item{FDR}{(bool) TRUE: Add a column to the output with Bonferroni corrected p-values FALSE: won't}
 
 \item{annotation}{(bool) TRUE: Adds chromosome and MAPINFO column to output FALSE: won't}
-
-\item{anno_file_path}{(string) path to annotation file (required if annotation is TRUE). NOTE:
-- Has to include the following tab separated columns:
-  IlmnID (contains the CpG site IDs), CHR (contains the chromosome number), MAPINFO (contains the MAPINFO)}
 
 \item{verbose}{(bool) TRUE: will print output to terminal FALSE: won't}
 

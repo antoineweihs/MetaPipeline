@@ -4,9 +4,17 @@
 \alias{se_plot}
 \title{Standard error plots}
 \usage{
-se_plot(data_set, same_scale = TRUE, save_path, stratum, phenotype,
-  trim = FALSE, verbose = TRUE, print_log = FALSE,
-  log_path = "./log.txt")
+se_plot(
+  data_set,
+  same_scale = TRUE,
+  save_path,
+  stratum,
+  phenotype,
+  trim = FALSE,
+  verbose = TRUE,
+  print_log = FALSE,
+  log_path = "./log.txt"
+)
 }
 \arguments{
 \item{data_set}{(data.frame) data set created by \code{\link{load_files}}}

@@ -4,8 +4,15 @@
 \alias{print_summaries}
 \title{Print Summaries}
 \usage{
-print_summaries(data_set, save_path, stratum, phenotype, verbose = TRUE,
-  print_log = FALSE, log_path = "./log.txt")
+print_summaries(
+  data_set,
+  save_path,
+  stratum,
+  phenotype,
+  verbose = TRUE,
+  print_log = FALSE,
+  log_path = "./log.txt"
+)
 }
 \arguments{
 \item{data_set}{(data.frame) data set created by \code{\link{load_files}}}

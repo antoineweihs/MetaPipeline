@@ -24,7 +24,6 @@
 #' @param phenotype (string) phenotype that should be analysed (has to appear in the summary$Phenotype column)
 #' @param stratum (string) stratum that should be analysed (has to appear in the summary$stratum column)
 #' @param cohort (string) if only certain cohorts of the summary file should be analysed (has to appear in the summary$cohort column)
-#' @param anno_file_path (string) path to the annotation file
 #' @param pre_filter_step (bool) TRUE: runs script located at \code{pre_filter_script} FALSE: won't
 #' @param pre_filter_script (string) path to script. \code{pre_filter_step} has to be TRUE to run
 #' @param run_filter (bool) TRUE: runs size filter, removing sites with a sample size of less then \code{filter_percentage} of the maximum sample size
@@ -57,7 +56,6 @@
 #'@export
 preMeta_QC<-function( data_summary_path = "/home/weihsa/data/Thyroid_Cohorts/Cohort_Summary/summary.txt",
                       save_path = "./", phenotype, stratum, cohort = NULL,
-                      anno_file_path = "/home/weihsa/data/EWAS/Ilmn_Methylation_Masterfile-180309.txt.gz",
                       pre_filter_step = FALSE, pre_filter_script,                                                 #pre-filter steps(optional)
                       run_filter=TRUE, filter_percentage=25,                                                      #filter variables
                       pre_plotting_step = FALSE, pre_plotting_script,                                             #pre-plotting steps (optional)
@@ -80,7 +78,7 @@ preMeta_QC<-function( data_summary_path = "/home/weihsa/data/Thyroid_Cohorts/Coh
   ##print output run parameters
   text = c("",paste0("### Analysing ", phenotype, " ", stratum, " ###"),"", "Input parameters:", paste0("   data_summary_path = ", data_summary_path),
            paste0("   save_path = ", save_path), paste0("   phenotype = ", phenotype), paste0("   stratum = ", stratum),
-           if(!is.null(cohort)){paste0("   cohort = ", paste(cohort, collapse=", "))}, paste0("   anno_file_path =", anno_file_path),
+           if(!is.null(cohort)){paste0("   cohort = ", paste(cohort, collapse=", "))},
            paste0("   pre_filter_step = ", pre_filter_step), if(pre_filter_step) {paste0("   pre_filter_script = ", pre_filter_script)},
            paste0("   run_filter = ", run_filter), if(run_filter){paste0("   filter_percentage = ", filter_percentage)},
            paste0("   pre_plotting_step = ", pre_plotting_step), if(pre_plotting_step) {paste0("   pre_plotting_script = ", pre_plotting_script)},
@@ -100,7 +98,7 @@ preMeta_QC<-function( data_summary_path = "/home/weihsa/data/Thyroid_Cohorts/Coh
 
   ## load_files
   combined_data <- load_files(data_summary_path=data_summary_path, phenotype=phenotype, stratum=stratum,
-                              cohort=cohort, FDR=FALSE, annotation=TRUE,  anno_file=anno_file_path,
+                              cohort=cohort, FDR=FALSE, annotation=TRUE,
                               verbose=verbose, print_log=print_log, log_path=log_path)
 
   ## optional pre_filter step

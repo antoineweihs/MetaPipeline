@@ -4,8 +4,13 @@
 \alias{run_bacon}
 \title{Apply BACON}
 \usage{
-run_bacon(data_set, run = TRUE, print_log = FALSE,
-  log_path = "log.txt", verbose = TRUE)
+run_bacon(
+  data_set,
+  run = TRUE,
+  print_log = FALSE,
+  log_path = "log.txt",
+  verbose = TRUE
+)
 }
 \arguments{
 \item{data_set}{(data.frame) data set created by \code{\link{load_files}}}

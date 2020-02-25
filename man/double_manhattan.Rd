@@ -4,11 +4,24 @@
 \alias{double_manhattan}
 \title{double Manhattan Plot}
 \usage{
-double_manhattan(x, chr = "CHR", bp = "BP", p = "P",
-  markername = "MARKERNAME", beta = "BETA", col = c("gray10",
-  "gray60"), FDRcorr = TRUE, cutoff = 0.05, strict_cutoff = 0.001,
-  title = "Manhattan plot", logp = TRUE, marktop = FALSE,
-  save_plot = TRUE, save_path = "./", ...)
+double_manhattan(
+  x,
+  chr = "CHR",
+  bp = "BP",
+  p = "P",
+  markername = "MARKERNAME",
+  beta = "BETA",
+  col = c("gray10", "gray60"),
+  FDRcorr = TRUE,
+  cutoff = 0.05,
+  strict_cutoff = 0.001,
+  title = "Manhattan plot",
+  logp = TRUE,
+  marktop = FALSE,
+  save_plot = TRUE,
+  save_path = "./",
+  ...
+)
 }
 \arguments{
 \item{x}{(data.frame) input data set}

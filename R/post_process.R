@@ -11,10 +11,9 @@
 #' @param significance_level (double) FDR/p-value significance level for cut off
 #' @param plot_forest (bool) TRUE: Draws a forest plot of the top hits FALSE: won't
 #' @param plot_manhattan (bool) TRUE: will create a manhattan plot of the results FALSE: won't
-#' @param output_path (string) output path for the forest plot
+#' @param plot_annotation (bool) TRUE: will create an annotation plot of the top hits FALSE: won't
+#' @param output_path (string) output path for the plots
 #' @param annotate_result (bool) TRUE: will merge output file with annoation file FALSE: won't
-#' @param annotation_filepath (string) file path to annotation file (annotation file has to contain a 'Markername' column, has to be a tab separated file,
-#'                            comments have to be preceded by '#')
 #' @param return_hits_only (bool) TRUE: will only return sites above the significance level cut off. FALSE: will return the whole data set.
 #' @param phenotype (string) phenotype currently examined (for the forest plot name and label)
 #' @param stratum (string) stratum currently examined (for the forest plot and label)
@@ -27,9 +26,11 @@
 #'
 #' @importFrom metafor rma forest
 #' @importFrom readr read_delim
+#' @importFrom stats p.adjust
 #' @export
-post_process <- function(result, combined_data, model, FDR, significance_level=0.05, plot_forest=TRUE, plot_manhattan=TRUE, output_path="./", annotate_result=TRUE,
-                         annotation_filepath=NULL, return_hits_only=FALSE, phenotype=NULL, stratum=NULL, print_log=FALSE, log_path="./", verbose=TRUE)
+post_process <- function(result, combined_data, model, FDR, significance_level=0.05, plot_forest=TRUE, plot_manhattan=TRUE,
+                         plot_annotation=TRUE, output_path="./", annotate_result=TRUE,
+                         return_hits_only=FALSE, phenotype=NULL, stratum=NULL, print_log=FALSE, log_path="./", verbose=TRUE)
 {
   #terminal and log file output
   text = "Running post processing on results"
@@ -44,7 +45,8 @@ post_process <- function(result, combined_data, model, FDR, significance_level=0
     text = "Post Process error: FDR = TRUE but no FDR column in data set. Using p-values."
     if(verbose) {writeLines(text)}
     if(print_log) {cat(text, file=log_path, append=TRUE, sep="\n")}
-    relevant_id = result$Markername[which(as.numeric(as.character(result$Pval_phenotype)) < significance_level & result$analysis_error == FALSE)]
+    FDR = FALSE
+
   }
   if(FDR == FALSE) {relevant_id = result$Markername[which(as.numeric(as.character(result$Pval_phenotype)) < significance_level & result$analysis_error == FALSE)]}
 
@@ -115,23 +117,31 @@ post_process <- function(result, combined_data, model, FDR, significance_level=0
     }
   }
 
+  if(plot_annotation & FDR == TRUE)
+  {
+    temp = result
+    temp = temp[!is.na(temp$Pval_phenotype),]
+    temp$Pval_phenotype = stats::p.adjust(d$Pval_phenotype, "BH")
+    for(i in relevant_id)
+    {
+      annotation_plot(result=temp, id=i, phenotype=phenotype, verbose=verbose, print_log=print_log, log_path=log_path, save_dest=output_path)
+    }
+  }
+
+  if(plot_annotation & FDR == FALSE)
+  {
+    for(i in relevant_id)
+    {
+      annotation_plot(result=result, id=i, phenotype=phenotype, verbose=verbose, print_log=print_log, log_path=log_path, save_dest=output_path)
+    }
+  }
+
   if(annotate_result)
   {
     text = "Annotating results"
     if(verbose) {writeLines(text)}
     if(print_log) {cat(text, file=log_path, append=TRUE, sep="\n")}
-
-    if(is.null(annotation_filepath))
-    {
-      text = "Post Process error: No annotation file given, skipping annotation step"
-      if(verbose) {writeLines(text)}
-      if(print_log) {cat(text, file=log_path, append=TRUE, sep="\n")}
-    }
-    else
-    {
-      annotation_file <- readr::read_delim(annotation_filepath, "\t", escape_double = FALSE, comment = "#", trim_ws = TRUE, col_types = readr::cols(), progress = FALSE)
-      result = merge(result, annotation_file, by="Markername", all.x=TRUE, all.y=FALSE)
-    }
+    result = merge(result, Masterfile, by="Markername", all.x=TRUE, all.y=FALSE)
   }
 
   if(return_hits_only)

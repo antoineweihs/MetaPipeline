@@ -4,9 +4,17 @@
 \alias{beta_plot}
 \title{Beta plots}
 \usage{
-beta_plot(data_set, same_scale = TRUE, save_path, stratum, phenotype,
-  trim = FALSE, verbose = TRUE, print_log = FALSE,
-  log_path = "./log.txt")
+beta_plot(
+  data_set,
+  same_scale = TRUE,
+  save_path,
+  stratum,
+  phenotype,
+  trim = FALSE,
+  verbose = TRUE,
+  print_log = FALSE,
+  log_path = "./log.txt"
+)
 }
 \arguments{
 \item{data_set}{(data.frame) data set created by \code{\link{load_files}}}
