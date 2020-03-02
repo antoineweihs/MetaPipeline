@@ -117,22 +117,11 @@ post_process <- function(result, combined_data, model, FDR, significance_level=0
     }
   }
 
-  if(plot_annotation & FDR == TRUE)
-  {
-    temp = result
-    temp = temp[!is.na(temp$Pval_phenotype),]
-    temp$Pval_phenotype = stats::p.adjust(d$Pval_phenotype, "BH")
-    for(i in relevant_id)
-    {
-      annotation_plot(result=temp, id=i, phenotype=phenotype, verbose=verbose, print_log=print_log, log_path=log_path, save_dest=output_path)
-    }
-  }
-
-  if(plot_annotation & FDR == FALSE)
+  if(plot_annotation)
   {
     for(i in relevant_id)
     {
-      annotation_plot(result=result, id=i, phenotype=phenotype, verbose=verbose, print_log=print_log, log_path=log_path, save_dest=output_path)
+      annotation_plot(result=result, id=i, phenotype=phenotype, verbose=verbose, print_log=print_log, log_path=log_path, save_dest=output_path, FDR=FDR)
     }
   }
 

@@ -230,12 +230,12 @@ chromosome_plot <- function(data_set,save_path, stratum, phenotype, verbose=TRUE
     temp_data = temp_data[!is.na(temp_data$BETA),]
     temp_data = temp_data[!is.na(temp_data$SE),]
     temp_data$CHR = as.numeric(temp_data$CHR)
-    temp_data$POS = as.numeric(temp_data$POS)
+    temp_data$MAPINFO = as.numeric(temp_data$MAPINFO)
     if(all(temp_data$Array == "EPIC")) {isEPIC = TRUE}
     else if (all(temp_data$Array == "450")) {isEPIC = FALSE}
     else { stop(paste0("Unknown Array type", table(temp_data$Array))) }
 
-    plot1 = ggplot2::ggplot(temp_data, ggplot2::aes(x=CHR, y=POS)) + ggplot2::geom_point() + ggplot2::scale_x_continuous(breaks=1:24, labels=1:24)
+    plot1 = ggplot2::ggplot(temp_data, ggplot2::aes(x=CHR, y=MAPINFO)) + ggplot2::geom_point() + ggplot2::scale_x_continuous(breaks=1:24, labels=1:24)
     plot1 = plot1 + ggplot2::ggtitle(paste0(phenotype, " ", stratum, " ", cohort_names[i], " chromosomes"))
     if(isEPIC)
     {
@@ -339,7 +339,7 @@ se_vs_size_plot <- function(data_set,save_path, stratum, phenotype, verbose=TRUE
 #' @importFrom ggplot2 ggplot geom_point scale_color_manual geom_text xlab ggsave aes ggtitle scale_x_continuous geom_hline theme element_blank ylab
 #'
 #' @export
-double_manhattan <- function(x, chr="CHR", bp="BP", p="P", markername="MARKERNAME", beta="BETA",
+double_manhattan <- function(x, chr="CHR", bp="MAPINFO", p="P", markername="MARKERNAME", beta="BETA",
                              col=c("gray10", "gray60"), FDRcorr = TRUE,
                              cutoff=0.05, strict_cutoff=0.001, title = "Manhattan plot",
                              logp=TRUE, marktop = FALSE, save_plot=TRUE, save_path="./",...)
@@ -443,4 +443,146 @@ double_manhattan <- function(x, chr="CHR", bp="BP", p="P", markername="MARKERNAM
   if (save_plot) ggplot2::ggsave(paste0(save_path,"_manhattan_plot.png"), plot=myplot, width=15.5, height=8.61, units="cm", dpi="retina")
 
   return(0)
+}
+
+
+#' @title annotation plots for CpG sites
+#' @author Antoine Weihs <antoine.weihs@@uni-greifswald.de>
+#' @description plotting function that creates annotation plots of CpG sites using the UCSC database
+#'
+#' @param result (data.frame) data set created by \code{\link{meta}}
+#' @param id (string) CpG ID of the CpG site that should be plotted
+#' @param phenotype (string) name of the phenotype analysed
+#' @param width (int) width of the window size around the CpG site that should be plotted
+#' @param FDR (bool) TRUE: uses FDR correction FALSE: won't
+#' @param verbose (bool) TRUE: will print output to terminal FALSE: won't
+#' @param print_log (bool) TRUE: prints logs to log_path FALSE: won't
+#' @param log_path (string) full path + file name of log file
+#' @param save_dest (string) path to where the plots should be saved
+#'
+#' @importFrom Gviz IdeogramTrack AnnotationTrack UcscTrack displayPars HighlightTrack DataTrack plotTracks
+#' @importFrom GenomicRanges makeGRangesFromDataFrame
+#' @importFrom org.Hs.eg.db org.Hs.eg.db
+#' @importFrom rtracklayer browserSession genome ucscTableQuery GRangesForUCSCGenome getTable
+#' @importFrom IRanges IRanges ranges
+#' @importFrom AnnotationDbi mapIds
+#' @importFrom S4Vectors mcols
+#' @export
+annotation_plot <- function(result, id, phenotype, width=50000, FDR =F,
+                            verbose=T, print_log = F, log_path = "log.txt",
+                            save_dest = "C:/Users/weihsa/Documents/")
+{
+  "%nin%" = Negate("%in%")
+  if("MAPINFO" %nin% names(result))
+  {
+    result = merge(result, Masterfile, by="Markername")
+  }
+
+  if(FDR & ("FDR" %nin% names(result)))
+  {
+    result = result[!is.na(result$Pval_phenotype),]
+    result$FDR = stats::p.adjust(result$Pval_phenotype, "BH")
+    text = paste0("FDR missing from data set. Calculating FDR values")
+    if(verbose) writeLines(text)
+    if(print_log) cat(text, file=log_path, append=TRUE, sep="\n")
+  }
+
+  text = paste0("Plotting: ", phenotype, " ", id)
+  if(verbose) writeLines(text)
+  if(print_log) cat(text, file=log_path, append=TRUE, sep="\n")
+
+  #get location of cpg site of interest
+  chr = result$CHR[result$Markername == id]
+  location = result$MAPINFO[result$Markername == id]
+
+  #extract cpg sites from result data set which lie +- 50,000bp from the site of interest
+  temp = result[result$CHR == chr,]
+  temp = temp[(temp$MAPINFO >= (location - width) & temp$MAPINFO <= (location + width)),]
+
+
+  #reduce data set in order to fit the expected format
+  if(FDR)
+  {
+    temp = temp[, c(which(names(temp) == "Markername"), which(names(temp) == "CHR"),
+                    which(names(temp) == "MAPINFO"), which(names(temp) == "FDR"))]
+  }
+  else
+  {
+    temp = temp[, c(which(names(temp) == "Markername"), which(names(temp) == "CHR"),
+                  which(names(temp) == "MAPINFO"), which(names(temp) == "Pval_phenotype"))]
+  }
+
+  temp = temp[order(temp$MAPINFO),]
+  names(temp) = c("TargetID", "CHR", "MAPINFO", "Pval")
+
+  gen = "hg19"
+  coord = as.numeric(as.character(temp$MAPINFO))
+  #little chromosome plot at the top
+  itrack <- Gviz::IdeogramTrack(genome = gen, chromosome = chr)
+
+
+  #pval plot
+  pval = -log10(as.numeric(as.character(temp$Pval)))
+  mygroups = rep(1, length(temp$Pval))
+  mygroups[temp$TargetID == id] = 2
+  if(FDR)
+  {
+    cpgTrack = Gviz::DataTrack(data = pval, start = coord, width=0, chromosome = chr, genome = gen, name = "-log10(FDR)", group=mygroups,
+                               baseline = -log10(1.1e-07), col.baseline = "#FF2D00", col = c("blue", "red"), type="p", symbol=temp$TargetID)
+  }
+  else
+  {
+    cpgTrack = Gviz::DataTrack(data = pval, start = coord, width=0, chromosome = chr, genome = gen, name = "-log10(P-Values)", group=mygroups,
+                               baseline = -log10(1.1e-07), col.baseline = "#FF2D00", col = c("blue", "red"), type="p", symbol=temp$TargetID)
+  }
+
+  #ucsc gene plot
+  mystart = (min(coord)-width)
+  myend = (max(coord)+width)
+  knownGenes = Gviz::UcscTrack(genome=gen, chromosome=chr, table ="ncbiRefSeq", track = 'NCBI RefSeq', from=mystart, to=myend,
+                               trackType="GeneRegionTrack", rstarts="exonStarts", rends="exonEnds", gene="name",
+                               symbol="name", transcript="name", strand="strand", fill="#8282d2", name="UCSC Genes",
+                               showID=T, geneSymbol=T, stacking = 'pack')
+  z = IRanges::ranges(knownGenes)
+  S4Vectors::mcols(z)$symbol = AnnotationDbi::mapIds(org.Hs.eg.db::org.Hs.eg.db, gsub("\\.[1-9]$", "", S4Vectors::mcols(z)$symbol), "SYMBOL","REFSEQ")
+  IRanges::ranges(knownGenes) = z
+
+  #open session
+  mySession = rtracklayer::browserSession()
+  rtracklayer::genome(mySession) = gen
+  #cpg Islands
+  cpgIslandquery = rtracklayer::ucscTableQuery(mySession, "CpG Islands", rtracklayer::GRangesForUCSCGenome(gen, paste0("chr",chr), IRanges::IRanges(mystart, myend)))
+  cpgIslandTable = rtracklayer::getTable(cpgIslandquery)
+  if(dim(cpgIslandTable)[1] == 0) cpgIsland = Gviz::AnnotationTrack(NULL, name = "CpG Islands")
+  else
+  {
+    cpgIslandGranges = GenomicRanges::makeGRangesFromDataFrame(cpgIslandTable, keep.extra.columns = T, start.field = "chromStart", end.field = "chromEnd")
+    cpgIsland = Gviz::AnnotationTrack(cpgIslandGranges, name = "CpG Islands")
+  }
+
+  #chromHMM
+  chromHMMquery = rtracklayer::ucscTableQuery(mySession, "Broad ChromHMM", rtracklayer::GRangesForUCSCGenome(gen, paste0("chr", chr), IRanges::IRanges(mystart, myend)))
+  chromHMMTable = rtracklayer::getTable(chromHMMquery)
+  chromHMMTable$hex = sapply(strsplit(as.character(chromHMMTable$itemRgb), ","), function(x) rgb(x[1], x[2], x[3], maxColorValue = 255))
+  chromHMMGranges = GenomicRanges::makeGRangesFromDataFrame(chromHMMTable, keep.extra.columns = T, start.field = "chromStart", end.field = "chromEnd")
+  chromHMM = Gviz::AnnotationTrack(chromHMMGranges, name="  Broad ChromHMM", fill=chromHMMTable$hex, stacking = "dense", col.line = "black", collapse=F)
+
+  #SNPs (build 153)
+  SNPquery = rtracklayer::ucscTableQuery(mySession, "dbSNP 153", rtracklayer::GRangesForUCSCGenome(gen, paste0("chr", chr), IRanges::IRanges(mystart, myend)))
+  SNPtable = rtracklayer::getTable(SNPquery)
+  SNPGranges = GenomicRanges::makeGRangesFromDataFrame(SNPtable, keep.extra.columns = T, start.field = "chromStart", end.field = "chromEnd")
+  SNP = Gviz::AnnotationTrack(SNPGranges, name="  dbSNP 153", stacking = "dense", col = NULL, fill = "black")
+
+
+  Gviz::displayPars(cpgIsland) = list(cex.title = 0.5, rotation.title = 0)
+  Gviz::displayPars(chromHMM) = list(cex.title = 0.5, rotation.title = 0)
+  Gviz::displayPars(SNP) = list(cex.title = 0.5, rotation.title = 0)
+  Gviz::displayPars(cpgTrack) = list(cex.title = 0.5)
+  Gviz::displayPars(knownGenes) = list(cex.title = 0.5, rotation.title = 0)
+  ht <- Gviz::HighlightTrack(trackList = list(cpgTrack, knownGenes, cpgIsland, chromHMM, SNP), start = location, end = location, chromosome = chr, col = "black")
+
+  #actual plot
+  png(file = paste0(save_dest, phenotype, "_", id, ".png"), res=320, width=16, height=16, units = "cm")
+  Gviz::plotTracks(list(itrack, ht), from = min(coord)-width, to = max(coord)+width, transcriptAnnotation="symbol")
+  dev.off()
 }

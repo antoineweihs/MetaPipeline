@@ -7,7 +7,7 @@
 double_manhattan(
   x,
   chr = "CHR",
-  bp = "BP",
+  bp = "MAPINFO",
   p = "P",
   markername = "MARKERNAME",
   beta = "BETA",

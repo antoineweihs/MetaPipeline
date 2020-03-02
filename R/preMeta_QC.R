@@ -54,7 +54,7 @@
 #' @param verbose (bool) TRUE: print log to command line FALSE: won't
 #'
 #'@export
-preMeta_QC<-function( data_summary_path = "/home/weihsa/data/Thyroid_Cohorts/Cohort_Summary/summary.txt",
+preMeta_QC<-function( data_summary_path,
                       save_path = "./", phenotype, stratum, cohort = NULL,
                       pre_filter_step = FALSE, pre_filter_script,                                                 #pre-filter steps(optional)
                       run_filter=TRUE, filter_percentage=25,                                                      #filter variables

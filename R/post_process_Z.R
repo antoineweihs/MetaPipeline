@@ -83,24 +83,11 @@ post_processZ <- function(result, FDR, significance_level=0.05, plot_manhattan=T
     }
   }
 
-  if(plot_annotation & FDR == TRUE)
+  if(plot_annotation)
   {
-    temp = result
-    temp = temp[!is.na(temp$Estimated_PValue),]
-    temp$Pval_phenotype = stats::p.adjust(d$Estimated_PValue, "BH")
     for(i in relevant_id)
     {
-      annotation_plot(result=temp, id=i, phenotype=phenotype, verbose=verbose, print_log=print_log, log_path=log_path, save_dest=output_path)
-    }
-  }
-
-  if(plot_annotation & FDR == FALSE)
-  {
-    temp = result
-    temp$Pval_phenotype = temp$Estimated_PValue
-    for(i in relevant_id)
-    {
-      annotation_plot(result=result, id=i, phenotype=phenotype, verbose=verbose, print_log=print_log, log_path=log_path, save_dest=output_path)
+      annotation_plot(result=temp, id=i, phenotype=phenotype, verbose=verbose, print_log=print_log, log_path=log_path, save_dest=output_path, FDR=FDR)
     }
   }
 

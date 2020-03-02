@@ -5,7 +5,7 @@
 \title{Pre meta-analysis QC pipeline}
 \usage{
 preMeta_QC(
-  data_summary_path = "/home/weihsa/data/Thyroid_Cohorts/Cohort_Summary/summary.txt",
+  data_summary_path,
   save_path = "./",
   phenotype,
   stratum,

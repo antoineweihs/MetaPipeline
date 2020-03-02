@@ -125,7 +125,7 @@ load_files <- function(data_summary_path, phenotype, stratum, cohort=NULL, FDR=T
 
   if(annotation)
   {
-    combined_data = merge(combined_data, Masterfile, by="probeID")
+    combined_data = merge(combined_data, Masterfile, by.x="probeID", by.y="Markername")
   }
 
   combined_data$BETA = as.numeric(as.character(combined_data$BETA))

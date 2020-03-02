@@ -87,7 +87,8 @@ run_meta <- function(	phenotype,
                       verbose=TRUE)
 {
   ## control step: check if everything is there
-  if(!file.exists(data_summary_path)) {stop(paste0("data summary file is not at ", data_summary_path, ". Please change the data_summary_path variable"))}
+  if(!file.exists(data_summary_path)) {stop(paste0("data summary file is not at ", data_summary_path,
+                                                   ". Please change the data_summary_path variable"))}
   if((save_RData | save_csvData) & !dir.exists(output_path)) {stop(paste0("output directory ", output_path,
                                                                           " does not exist. Please change the output_path variable"))}
 
@@ -102,7 +103,7 @@ run_meta <- function(	phenotype,
            if(pre_meta_step) {paste0("   pre_meta_path: ", pre_meta_path)}, paste0("   post_meta_step: ", post_meta_step),
            if(post_meta_step) {paste0("   post_meta_path: ", post_meta_path)}, paste0("   run_post_process: ", run_post_process),
            if(run_post_process) {paste0("   plot_forest: ", plot_forest)}, if(run_post_process) {paste0("   plot_manhattan: ", plot_manhattan)},
-           if(run_post_process) {paste0("   annotate_result: ", annotate_result)},
+           if(run_post_process) {paste0("   plot_annotation: ", plot_annotation)}, if(run_post_process) {paste0("   annotate_result: ", annotate_result)},
            if(run_post_process) {paste0("   run_posterior_Check: ", run_posterior_Check)},
            if(run_post_process) {paste0("   post_sigLevel: ", post_sigLevel)}, if(run_post_process) {paste0("   post_cutoff: ", post_cutoff)},
            if(run_post_process) {paste0("   post_replicates: ", post_replicates)}, if(run_post_process) {paste0("   return_hits_only: ", return_hits_only)},
@@ -185,7 +186,8 @@ run_meta <- function(	phenotype,
   }
 
   ## post process
-  ##run FE or REML post process (creates forest plots of significant sites and/or a double manhattan plot and/or annotates the output)
+  ##run FE or REML post process (creates forest plots of significant sites and/or a double manhattan plot
+  ##    and/or annotates the output and/or annotation plots)
   if(run_post_process & (model=="FE" | model=="REML"))
   {
     ## terminal and log file output
