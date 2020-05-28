@@ -356,6 +356,8 @@ double_manhattan <- function(x, chr="CHR", bp="MAPINFO", p="P", markername="MARK
 
   d = d[!is.na(d$beta),]
   d = d[!is.na(d$P),]
+  d = d[!is.na(d$CHR),]
+  d = d[!is.na(d$BP),]
 
   if(FDRcorr) d$P = p.adjust(d$P, "BH")
 
