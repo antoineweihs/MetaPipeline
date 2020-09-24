@@ -530,12 +530,14 @@ annotation_plot <- function(result, id, phenotype, width=50000, FDR =F,
   if(FDR)
   {
     cpgTrack = Gviz::DataTrack(data = pval, start = coord, width=0, chromosome = chr, genome = gen, name = "-log10(FDR)", group=mygroups,
-                               baseline = -log10(1.1e-07), col.baseline = "#FF2D00", col = c("blue", "red"), type="p", symbol=temp$TargetID)
+                               baseline = -log10(1.1e-07), col.baseline = "#FF2D00", col = "black", type="p", symbol=temp$TargetID,
+                               cex=1.2, pch=21, bg="slateblue3")
   }
   else
   {
     cpgTrack = Gviz::DataTrack(data = pval, start = coord, width=0, chromosome = chr, genome = gen, name = "-log10(P-Values)", group=mygroups,
-                               baseline = -log10(1.1e-07), col.baseline = "#FF2D00", col = c("blue", "red"), type="p", symbol=temp$TargetID)
+                               baseline = -log10(1.1e-07), col.baseline = "#FF2D00", col = "black", type="p", symbol=temp$TargetID,
+                               cex=1.2, pch=21, bg="slateblue3")
   }
 
   #ucsc gene plot
@@ -543,7 +545,7 @@ annotation_plot <- function(result, id, phenotype, width=50000, FDR =F,
   myend = (max(coord)+width)
   knownGenes = Gviz::UcscTrack(genome=gen, chromosome=chr, table ="ncbiRefSeq", track = 'NCBI RefSeq', from=mystart, to=myend,
                                trackType="GeneRegionTrack", rstarts="exonStarts", rends="exonEnds", gene="name",
-                               symbol="name", transcript="name", strand="strand", fill="#8282d2", name="UCSC Genes",
+                               symbol="name", transcript="name", strand="strand", fill="#8282d2", name="RefSeq Genes",
                                showID=T, geneSymbol=T, stacking = 'pack')
   z = IRanges::ranges(knownGenes)
   S4Vectors::mcols(z)$symbol = AnnotationDbi::mapIds(org.Hs.eg.db::org.Hs.eg.db, gsub("\\.[1-9]$", "", S4Vectors::mcols(z)$symbol), "SYMBOL","REFSEQ")
@@ -563,26 +565,27 @@ annotation_plot <- function(result, id, phenotype, width=50000, FDR =F,
   }
 
   #chromHMM
-  chromHMMquery = rtracklayer::ucscTableQuery(mySession, "Broad ChromHMM", rtracklayer::GRangesForUCSCGenome(gen, paste0("chr", chr), IRanges::IRanges(mystart, myend)))
-  chromHMMTable = rtracklayer::getTable(chromHMMquery)
-  chromHMMTable$hex = sapply(strsplit(as.character(chromHMMTable$itemRgb), ","), function(x) rgb(x[1], x[2], x[3], maxColorValue = 255))
-  chromHMMGranges = GenomicRanges::makeGRangesFromDataFrame(chromHMMTable, keep.extra.columns = T, start.field = "chromStart", end.field = "chromEnd")
-  chromHMM = Gviz::AnnotationTrack(chromHMMGranges, name="  Broad ChromHMM", fill=chromHMMTable$hex, stacking = "dense", col.line = "black", collapse=F)
+  #chromHMMquery = rtracklayer::ucscTableQuery(mySession, "Broad ChromHMM", rtracklayer::GRangesForUCSCGenome(gen, paste0("chr", chr), IRanges::IRanges(mystart, myend)))
+  #chromHMMTable = rtracklayer::getTable(chromHMMquery)
+  #chromHMMTable$hex = sapply(strsplit(as.character(chromHMMTable$itemRgb), ","), function(x) rgb(x[1], x[2], x[3], maxColorValue = 255))
+  #chromHMMGranges = GenomicRanges::makeGRangesFromDataFrame(chromHMMTable, keep.extra.columns = T, start.field = "chromStart", end.field = "chromEnd")
+  #chromHMM = Gviz::AnnotationTrack(chromHMMGranges, name="  Broad ChromHMM", fill=chromHMMTable$hex, stacking = "dense", col.line = "black", collapse=F)
 
-  #SNPs (build 153)
-  SNPquery = rtracklayer::ucscTableQuery(mySession, "dbSNP 153", rtracklayer::GRangesForUCSCGenome(gen, paste0("chr", chr), IRanges::IRanges(mystart, myend)))
+  #Common SNPs (build 151)
+  SNPquery = rtracklayer::ucscTableQuery(mySession,  "Common SNPs(151)", rtracklayer::GRangesForUCSCGenome(gen, paste0("chr", chr), IRanges::IRanges(mystart, myend)))
   SNPtable = rtracklayer::getTable(SNPquery)
   SNPGranges = GenomicRanges::makeGRangesFromDataFrame(SNPtable, keep.extra.columns = T, start.field = "chromStart", end.field = "chromEnd")
-  SNP = Gviz::AnnotationTrack(SNPGranges, name="  dbSNP 153", stacking = "dense", col = NULL, fill = "black")
+  SNP = Gviz::AnnotationTrack(SNPGranges, name="Common SNPs (151)", stacking = "dense", col = NULL, fill = "black")
 
 
   Gviz::displayPars(cpgIsland) = list(cex.title = 0.5, rotation.title = 0)
-  Gviz::displayPars(chromHMM) = list(cex.title = 0.5, rotation.title = 0)
+  #Gviz::displayPars(chromHMM) = list(cex.title = 0.5, rotation.title = 0)
   Gviz::displayPars(SNP) = list(cex.title = 0.5, rotation.title = 0)
   Gviz::displayPars(cpgTrack) = list(cex.title = 0.5)
   Gviz::displayPars(knownGenes) = list(cex.title = 0.5, rotation.title = 0)
-  ht <- Gviz::HighlightTrack(trackList = list(cpgTrack, knownGenes, cpgIsland, chromHMM, SNP), start = location, end = location, chromosome = chr, col = "black")
-
+  #ht <- Gviz::HighlightTrack(trackList = list(cpgTrack, knownGenes, cpgIsland, chromHMM, SNP), start = location, end = location, chromosome = chr, col = "black")
+  ht <- Gviz::HighlightTrack(trackList = list(cpgTrack, knownGenes, cpgIsland, SNP), start = location, end = location, chromosome = chr, col = "black")
+  
   #actual plot
   png(file = paste0(save_dest, phenotype, "_", id, ".png"), res=320, width=16, height=16, units = "cm")
   Gviz::plotTracks(list(itrack, ht), from = min(coord)-width, to = max(coord)+width, transcriptAnnotation="symbol")
