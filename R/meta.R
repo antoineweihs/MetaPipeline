@@ -25,7 +25,7 @@
 #'         \item{\code{SE_phenotype}}{: corresponding standard error}
 #'         \item{\code{Pval_phenotype}}{: corresponding p-value}
 #'         \item{\code{Zval_phenotype}}{: corresponding z-value}
-#'         \item{\code{Heterogeneity}}{: estimated heterogeneity (NA if model is FE)}
+#'         \item{\code{Heterogeneity}}{: estimated heterogeneity}
 #'         \item{\code{I2}}{: I squared parameter. Describes the percentage of variation across studies that is due to heterogeneity rather than by chance}
 #'         \item{\code{number_of_cohorts}}{: number of cohorts available for the site}
 #'         \item{\code{Cohort Names}}{: Multiple columns (one for each cohort) with + if the cohort effect is positive, - if it is negative, 0 if the effect is zero and ? if the no effect is present}
@@ -190,7 +190,7 @@ meta <- function(	input_data,
 
       # check if error occured, if yes, return Na line with error code to output, if no return results
       if(inherits(current_result, "try-error")) {output = c(data$probeID[1], model, NA, NA, NA, NA, NA, NA, length(data$probeID), included_cohorts, sample_size, TRUE, current_result[1])}
-      else {output = c(data$probeID[1], model, current_result$b, current_result$se, current_result$pval, current_result$zval, current_result$tau2, current_result$I2, length(data$probeID), included_cohorts, sample_size, FALSE, NA)}
+      else {output = c(data$probeID[1], model, current_result$b, current_result$se, current_result$pval, current_result$zval, current_result$H2, current_result$I2, length(data$probeID), included_cohorts, sample_size, FALSE, NA)}
     }
     return(output)
   }
@@ -303,7 +303,7 @@ meta <- function(	input_data,
     meta_result = data.frame(meta_result, stringsAsFactors = FALSE)
 
     # set heterogenity at NA if it FE model is used (as it is not considered by this model)
-    if(model == "FE") {meta_result$Heterogeneity = NA}
+    #if(model == "FE") {meta_result$Heterogeneity = NA}
 
     # calculated FDR adjusted p-values of the meta-analysis outcome (will remove any site where an error occured)
     if(FDR)

@@ -60,7 +60,7 @@ data.frame containing the results of the meta-analysis. If the model is FE or RE
         \item{\code{SE_phenotype}}{: corresponding standard error}
         \item{\code{Pval_phenotype}}{: corresponding p-value}
         \item{\code{Zval_phenotype}}{: corresponding z-value}
-        \item{\code{Heterogeneity}}{: estimated heterogeneity (NA if model is FE)}
+        \item{\code{Heterogeneity}}{: estimated heterogeneity}
         \item{\code{I2}}{: I squared parameter. Describes the percentage of variation across studies that is due to heterogeneity rather than by chance}
         \item{\code{number_of_cohorts}}{: number of cohorts available for the site}
         \item{\code{Cohort Names}}{: Multiple columns (one for each cohort) with + if the cohort effect is positive, - if it is negative, 0 if the effect is zero and ? if the no effect is present}
