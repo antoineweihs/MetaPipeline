@@ -16,7 +16,7 @@
 #' @export
 beta_plot <- function(data_set, same_scale=TRUE, save_path, stratum, phenotype, trim=FALSE, verbose=TRUE, print_log=FALSE, log_path="./log.txt")
 {
-  num_cohorts = length(levels(data_set$Cohort))
+  num_cohorts = length(unique(data_set$Cohort))
   data_set$Cohort = as.character(data_set$Cohort)
 
   #all together
@@ -83,7 +83,7 @@ beta_plot <- function(data_set, same_scale=TRUE, save_path, stratum, phenotype, 
 #' @export
 pval_plot <- function(data_set,same_scale=TRUE, save_path, stratum, phenotype, trim=FALSE, verbose=TRUE, print_log=FALSE, log_path="./log.txt")
 {
-  num_cohorts = length(levels(data_set$Cohort))
+  num_cohorts = length(unique(data_set$Cohort))
   data_set$Cohort = as.character(data_set$Cohort)
 
   #all together
@@ -149,7 +149,7 @@ pval_plot <- function(data_set,same_scale=TRUE, save_path, stratum, phenotype, t
 #' @export
 se_plot <- function(data_set,same_scale=TRUE, save_path, stratum, phenotype, trim=FALSE, verbose=TRUE, print_log=FALSE, log_path="./log.txt")
 {
-  num_cohorts = length(levels(data_set$Cohort))
+  num_cohorts = length(unique(data_set$Cohort))
   data_set$Cohort = as.character(data_set$Cohort)
 
   #all together
@@ -585,7 +585,7 @@ annotation_plot <- function(result, id, phenotype, width=50000, FDR =F,
   Gviz::displayPars(knownGenes) = list(cex.title = 0.5, rotation.title = 0)
   #ht <- Gviz::HighlightTrack(trackList = list(cpgTrack, knownGenes, cpgIsland, chromHMM, SNP), start = location, end = location, chromosome = chr, col = "black")
   ht <- Gviz::HighlightTrack(trackList = list(cpgTrack, knownGenes, cpgIsland, SNP), start = location, end = location, chromosome = chr, col = "black")
-  
+
   #actual plot
   png(file = paste0(save_dest, phenotype, "_", id, ".png"), res=320, width=16, height=16, units = "cm")
   Gviz::plotTracks(list(itrack, ht), from = min(coord)-width, to = max(coord)+width, transcriptAnnotation="symbol")
