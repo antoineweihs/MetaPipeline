@@ -8,7 +8,7 @@
 #' @param log_path (string) path to log file
 #' @param verbose (bool) TRUE: print log to command line FALSE: won't
 #'
-#' @return filtered \code{data_set} NOTE: Sites with NA in effect or standard error column have been removed
+#' @return filtered \code{data_set} NOTE: Sites with NA in effect or standard error column have been removed if run = T otherwise the initial dataset.
 #'
 #' @export
 run_filter <- function(data_set, percentage=25, run=TRUE, print_log=FALSE, log_path="./log.txt", verbose=TRUE)
@@ -47,7 +47,6 @@ run_filter <- function(data_set, percentage=25, run=TRUE, print_log=FALSE, log_p
     text=""
     if(verbose) {writeLines(text)}
     if(print_log) {cat(text, file=log_path, append=TRUE, sep="\n")}
-
-    return(data_set)
   }
+  return(data_set)
 }
