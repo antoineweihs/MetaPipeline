@@ -276,9 +276,9 @@ meta <- function(	input_data,
     #if the CpG site appears in more then 1 cohort an meta analysis is done on that site
     else
     {
-      temp_zscores = qnorm(data$P_VAL/2) * sign(data$BETA)
+      temp_zscores = qnorm(1-data$P_VAL/2) * sign(data$BETA)
       temp_weights = sqrt(data$Size)
-      overall_zscore = sum(temp_zscores*temp_weights)/sum(temp_weights)
+      overall_zscore = sum(temp_zscores*temp_weights)/sqrt(sum(temp_weights^2))
       overall_pvalue = 2*pnorm(-abs(overall_zscore))
       output = c(data$probeID[1], model, overall_pvalue, overall_zscore, length(data$probeID), included_cohorts, sample_size, FALSE, NA)
     }

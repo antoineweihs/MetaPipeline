@@ -27,7 +27,7 @@ run_filter(
 \item{verbose}{(bool) TRUE: print log to command line FALSE: won't}
 }
 \value{
-filtered \code{data_set} NOTE: Sites with NA in effect or standard error column have been removed
+filtered \code{data_set} NOTE: Sites with NA in effect or standard error column have been removed if run = T otherwise the initial dataset.
 }
 \description{
 This function filters the data, removing all sites that have a sample size below the threshold value

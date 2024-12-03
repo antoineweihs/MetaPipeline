@@ -69,6 +69,19 @@ data.frame containing the results of the meta-analysis. If the model is FE or RE
         \item{\code{error_message}}{: contains error message if analysis_error is TRUE}
         \item{\code{FDR}}{: exists if FDR is TRUE and contains the FDR adjusted p-values}
         }
+        if the model i Z the output will have the following columns
+        \itemize{
+        \item{\code{Markername}}{: CpG Site ID}
+        \item{\code{Model}}{: Name of the model used (Z)}
+        \item{\code{Estimated_PValue}}{: estimated p-value}
+        \item{\code{Estimated_ZScore}}{: estimated z-score}
+        \item{\code{number_of_cohorts}}{: number of cohorts available for the site}
+        \item{\code{Cohort Names}}{: Multiple columns (one for each cohort) with + if the cohort effect is positive, - if it is negative, 0 if the effect is zero and ? if the no effect is present}
+        \item{\code{sample_size}}{: total number of samples included in this site}
+        \item{\code{analysis_error}}{: TRUE if a problem occurred, FALSE if none occurred}
+        \item{\code{error_message}}{: contains error message if analysis_error is TRUE}
+        \item{\code{FDR}}{: exists if FDR is TRUE and contains the FDR adjusted p-values}
+        }
         If the model is BAYES the output will have the following columns
         \itemize{
         \item{\code{Markername}}{: CpG Site ID}

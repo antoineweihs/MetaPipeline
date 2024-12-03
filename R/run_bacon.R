@@ -59,6 +59,7 @@ run_bacon <- function(data_set, run=TRUE, print_log=FALSE, log_path="log.txt", v
             #modify effects and standard errors in the combined data file
             temp_data$BETA = as.vector(bacon::es(bc))
             temp_data$SE = as.vector(bacon::se(bc))
+            temp_data$P_VAL = as.vector(bacon::pval(bc))
             data_set = data_set[data_set$Cohort != cohorts[i],]
             data_set = rbind(data_set, temp_data)
           }
