@@ -31,7 +31,6 @@ beta_plot <- function(data_set, same_scale=TRUE, save_path, stratum, phenotype, 
   text = paste0("Saving: Beta together to: ", full_path)
   if(verbose) {writeLines(text)}
   if(print_log) {cat(text, file=log_path, append=TRUE, sep="\n")}
-  save(together, file = paste0(full_path, ".RData"))
   ggplot2::ggsave(full_path, plot=together, width=594, height=420, units="mm", dpi="retina")
 
   #separate
@@ -59,7 +58,6 @@ beta_plot <- function(data_set, same_scale=TRUE, save_path, stratum, phenotype, 
     text = paste0("Saving: Beta separate (different scale) to: ", full_path)
   }
 
-  save(separate, file = paste0(full_path, ".RData"))
   ggplot2::ggsave(full_path, plot=separate, width=594, height=420, units="mm", dpi="retina")
   if(verbose) {writeLines(text)}
   if(print_log) {cat(text, file=log_path, append=TRUE, sep="\n")}
@@ -99,8 +97,7 @@ pval_plot <- function(data_set,same_scale=TRUE, save_path, stratum, phenotype, t
   text = paste0("Saving: PVAL together to: ", full_path)
   if(verbose) {writeLines(text)}
   if(print_log) {cat(text, file=log_path, append=TRUE, sep="\n")}
-  
-  save(together, file = paste0(full_path, ".RData"))
+
   ggplot2::ggsave(full_path, plot=together, width=594, height=420, units="mm", dpi="retina")
 
   #separate
@@ -132,7 +129,6 @@ pval_plot <- function(data_set,same_scale=TRUE, save_path, stratum, phenotype, t
   if(verbose) {writeLines(text)}
   if(print_log) {cat(text, file=log_path, append=TRUE, sep="\n")}
 
-  save(separate, file = paste0(full_path, ".RData"))
   ggplot2::ggsave(full_path, plot=separate, width=594, height=420, units="mm", dpi="retina")
 }
 
@@ -170,7 +166,6 @@ se_plot <- function(data_set,same_scale=TRUE, save_path, stratum, phenotype, tri
   if(verbose) {writeLines(text)}
   if(print_log) {cat(text, file=log_path, append=TRUE, sep="\n")}
 
-  save(together, file = paste0(full_path, ".RData"))
   ggplot2::ggsave(full_path, plot=together, width=594, height=420, units="mm", dpi="retina")
 
   #separate
@@ -202,7 +197,6 @@ se_plot <- function(data_set,same_scale=TRUE, save_path, stratum, phenotype, tri
   if(verbose) {writeLines(text)}
   if(print_log) {cat(text, file=log_path, append=TRUE, sep="\n")}
 
-  save(separate, file = paste0(full_path, ".RData"))
   ggplot2::ggsave(full_path, plot=separate, width=594, height=420, units="mm", dpi="retina")
 }
 
@@ -279,7 +273,6 @@ chromosome_plot <- function(data_set,save_path, stratum, phenotype, verbose=TRUE
     if(verbose) {writeLines(text)}
     if(print_log) {cat(text, file=log_path, append=TRUE, sep="\n")}
 
-    save(plot, file = paste0(full_path, ".RData"))
     ggplot2::ggsave(full_path, plot=plot, width=594, height=420, units="mm", dpi="retina")
   }
 }
@@ -325,7 +318,6 @@ se_vs_size_plot <- function(data_set,save_path, stratum, phenotype, verbose=TRUE
   if(verbose) {writeLines(text)}
   if(print_log) {cat(text, file=log_path, append=TRUE, sep="\n")}
 
-  save(plot, file = paste0(full_path, ".RData"))
   ggplot2::ggsave(full_path, plot=plot, width=594, height=420, units="mm", dpi="retina")
 }
 
@@ -456,9 +448,8 @@ double_manhattan <- function(x, chr="CHR", bp="MAPINFO", p="P", markername="MARK
   if (!is.null(cutoff)) myplot = myplot + ggplot2::geom_hline(yintercept=cutoff, col="blue") + ggplot2::geom_hline(yintercept=-cutoff, col="blue")
   if (!is.null(strict_cutoff)) myplot = myplot + ggplot2::geom_hline(yintercept=strict_cutoff, col="red") + ggplot2::geom_hline(yintercept=-strict_cutoff, col="red")
 
-  if (save_plot) 
+  if (save_plot)
   {
-    save(myplot, file = paste0(save_path,"_manhattan_plot.png.RData"))
     ggplot2::ggsave(paste0(save_path,"_manhattan_plot.png"), plot=myplot, width=15.5, height=8.61, units="cm", dpi="retina")
   }
 
